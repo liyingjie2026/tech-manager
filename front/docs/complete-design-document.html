@@ -1,0 +1,3981 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>科研项目管理系统 - 详细设计方案（含原型）</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Microsoft YaHei", "SimSun", Arial, sans-serif;
+            font-size: 14pt;
+            line-height: 1.8;
+            color: #333;
+            background: #fff;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+        
+        /* 封面样式 */
+        .cover {
+            page-break-after: always;
+            text-align: center;
+            padding: 150px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .cover h1 {
+            font-size: 48pt;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+        
+        .cover h2 {
+            font-size: 28pt;
+            margin-bottom: 60px;
+            opacity: 0.9;
+        }
+        
+        .cover .meta {
+            font-size: 18pt;
+            margin-top: 80px;
+        }
+        
+        .cover .meta p {
+            margin: 15px 0;
+        }
+        
+        /* 目录样式 */
+        .toc {
+            page-break-after: always;
+            padding: 40px 0;
+        }
+        
+        .toc h2 {
+            font-size: 32pt;
+            margin-bottom: 40px;
+            text-align: center;
+            color: #667eea;
+        }
+        
+        .toc-list {
+            list-style: none;
+        }
+        
+        .toc-list li {
+            margin: 15px 0;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .toc-list a {
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .toc-list a:hover {
+            color: #667eea;
+        }
+        
+        /* 章节样式 */
+        h1 {
+            font-size: 32pt;
+            color: #667eea;
+            margin: 60px 0 30px 0;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+            page-break-before: always;
+        }
+        
+        h2 {
+            font-size: 24pt;
+            color: #764ba2;
+            margin: 40px 0 20px 0;
+            padding-left: 15px;
+            border-left: 5px solid #764ba2;
+        }
+        
+        h3 {
+            font-size: 18pt;
+            color: #555;
+            margin: 30px 0 15px 0;
+        }
+        
+        h4 {
+            font-size: 16pt;
+            color: #666;
+            margin: 20px 0 10px 0;
+        }
+        
+        p {
+            margin: 15px 0;
+            text-align: justify;
+            text-indent: 2em;
+        }
+        
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            font-size: 13pt;
+            page-break-inside: avoid;
+        }
+        
+        table thead {
+            background: #667eea;
+            color: white;
+        }
+        
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        table tbody tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        table tbody tr:hover {
+            background: #f0f0f0;
+        }
+        
+        /* 图片样式 */
+        .figure {
+            margin: 40px 0;
+            text-align: center;
+            page-break-inside: avoid;
+        }
+        
+        .figure img {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .figure-caption {
+            margin-top: 15px;
+            font-size: 13pt;
+            color: #666;
+            font-weight: bold;
+        }
+        
+        /* 截图容器 */
+        .screenshot {
+            margin: 40px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            page-break-inside: avoid;
+        }
+        
+        .screenshot h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .screenshot img {
+            width: 100%;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        
+        .screenshot .description {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 4px;
+            font-size: 13pt;
+        }
+        
+        /* 代码块样式 */
+        pre {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-size: 12pt;
+            line-height: 1.6;
+        }
+        
+        code {
+            font-family: "Courier New", monospace;
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12pt;
+        }
+        
+        /* 提示框样式 */
+        .note {
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 8px;
+            page-break-inside: avoid;
+        }
+        
+        .note-info {
+            background: #e3f2fd;
+            border-left: 5px solid #2196f3;
+        }
+        
+        .note-warning {
+            background: #fff3e0;
+            border-left: 5px solid #ff9800;
+        }
+        
+        .note-success {
+            background: #e8f5e9;
+            border-left: 5px solid #4caf50;
+        }
+        
+        .note-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 15pt;
+        }
+        
+        /* 列表样式 */
+        ul, ol {
+            margin: 20px 0 20px 40px;
+        }
+        
+        li {
+            margin: 10px 0;
+        }
+        
+        /* 流程图容器 */
+        .flowchart {
+            margin: 40px 0;
+            padding: 30px;
+            background: #fafafa;
+            border-radius: 8px;
+            text-align: center;
+            page-break-inside: avoid;
+        }
+        
+        .flowchart-title {
+            font-size: 16pt;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 25px;
+        }
+        
+        /* 页脚 */
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+            text-align: center;
+            color: #999;
+            font-size: 12pt;
+        }
+        
+        /* 打印优化 */
+        @media print {
+            body {
+                font-size: 12pt;
+            }
+            
+            .page-break {
+                page-break-after: always;
+            }
+            
+            .no-break {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 封面 -->
+<div class="cover">
+    <h1>科研项目管理系统</h1>
+    <h2>详细设计方案书（含界面原型）</h2>
+    <div class="meta">
+        <p><strong>项目名称：</strong>科研项目管理系统</p>
+        <p><strong>版本号：</strong>V1.0</p>
+        <p><strong>编制日期：</strong>2025年1月</p>
+        <p><strong>运行环境：</strong>麒麟操作系统 + 人大金仓数据库</p>
+        <p><strong>技术架构：</strong>Next.js 16 + Spring Boot 3.2</p>
+    </div>
+</div>
+
+<div class="container">
+
+<!-- 目录 -->
+<div class="toc">
+    <h2>目 录</h2>
+    <ul class="toc-list">
+        <li><a href="#chapter1"><span>第一章 项目概述</span><span>1</span></a></li>
+        <li><a href="#chapter2"><span>第二章 需求分析</span><span>15</span></a></li>
+        <li><a href="#chapter3"><span>第三章 系统架构设计</span><span>45</span></a></li>
+        <li><a href="#chapter4"><span>第四章 界面原型设计</span><span>85</span></a></li>
+        <li><a href="#chapter5"><span>第五章 数据库设计</span><span>185</span></a></li>
+        <li><a href="#chapter6"><span>第六章 功能模块详细设计</span><span>285</span></a></li>
+        <li><a href="#chapter7"><span>第七章 接口设计</span><span>425</span></a></li>
+        <li><a href="#chapter8"><span>第八章 安全设计</span><span>525</span></a></li>
+        <li><a href="#chapter9"><span>第九章 流程引擎设计</span><span>575</span></a></li>
+        <li><a href="#chapter10"><span>第十章 部署方案</span><span>625</span></a></li>
+        <li><a href="#chapter11"><span>第十一章 测试方案</span><span>675</span></a></li>
+        <li><a href="#chapter12"><span>第十二章 附录</span><span>700</span></a></li>
+    </ul>
+</div>
+
+<!-- 第一章：项目概述 -->
+<h1 id="chapter1">第一章 项目概述</h1>
+
+<h2>1.1 项目背景</h2>
+<p>随着科技创新驱动发展战略的深入实施，科研项目管理工作日益复杂化、精细化。传统的科研项目管理方式存在信息孤岛、流程繁琐、监管困难等问题，严重制约了科研管理效率的提升。为了适应新时代科研管理的需求，提高科研项目管理的科学化、规范化和信息化水平，亟需建设一套功能完善、技术先进、安全可靠的科研项目管理系统。</p>
+
+<p>本项目旨在构建一个集需求征集、项目申报、立项评审、过程管理、结题验收、成果管理于一体的综合性科研项目管理平台。系统采用先进的技术架构，支持多角色协同工作，实现科研项目全生命周期的数字化管理。</p>
+
+<h2>1.2 项目目标</h2>
+<p>本系统的建设目标是：</p>
+<ul>
+    <li>建立统一的科研项目管理平台，实现需求征集、项目申报、评审立项、过程监管、结题验收、成果管理的全流程信息化管理。</li>
+    <li>实现监测监管端、科研机构端、专家端三端协同，支持多角色在线办公，提高管理效率。</li>
+    <li>建立完善的权限管理体系，实现页面按钮级的细粒度权限控制。</li>
+    <li>构建灵活的流程引擎，支持可视化流程配置，适应不同类型项目的管理需求。</li>
+    <li>采用国产化技术路线，基于麒麟操作系统和人大金仓数据库，确保系统安全可控。</li>
+    <li>提供丰富的统计分析功能，为决策提供数据支撑。</li>
+</ul>
+
+<h2>1.3 建设原则</h2>
+
+<h3>1.3.1 先进性原则</h3>
+<p>系统采用目前主流的前后端分离架构，前端基于Next.js 16框架，支持服务端渲染和静态生成，提供优秀的用户体验。后端基于Spring Boot 3.2框架，采用微服务架构，便于系统扩展和维护。数据库选用人大金仓KingbaseES，完全兼容PostgreSQL生态，性能稳定可靠。</p>
+
+<h3>1.3.2 实用性原则</h3>
+<p>系统功能设计紧密结合科研项目管理的实际需求，充分考虑各类用户的使用习惯，界面友好、操作简便。系统提供完善的帮助文档和操作指南，降低用户学习成本。</p>
+
+<h3>1.3.3 安全性原则</h3>
+<p>系统采用多层次的安全防护体系，包括网络安全、应用安全、数据安全等。支持多因素认证、数据加密传输、敏感信息脱敏、操作日志审计等安全机制，确保系统和数据安全。</p>
+
+<h3>1.3.4 可扩展性原则</h3>
+<p>系统采用模块化设计，各功能模块相对独立，便于后续功能扩展。系统预留接口，支持与其他业务系统集成。采用微服务架构，支持横向扩展，满足业务增长需求。</p>
+
+<h3>1.3.5 国产化原则</h3>
+<p>系统全面采用国产化技术栈，包括麒麟操作系统、人大金仓数据库、达梦数据库等，确保系统安全可控，符合国家信息安全要求。</p>
+
+<h2>1.4 项目范围</h2>
+
+<h3>1.4.1 功能范围</h3>
+<p>系统主要包括以下功能模块：</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>序号</th>
+            <th>功能模块</th>
+            <th>子模块</th>
+            <th>说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>需求管理</td>
+            <td>需求征集、需求审核、需求匹配</td>
+            <td>支持科研需求的在线征集和审核</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>项目申报</td>
+            <td>申报指南、在线申报、材料上传、查重检测</td>
+            <td>支持项目在线申报和查重检测</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>立项评审</td>
+            <td>形式审查、专家评审、立项审批</td>
+            <td>支持多轮次专家评审</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>任务书管理</td>
+            <td>任务拆分、任务书签订、任务书审核</td>
+            <td>支持项目任务分解和进度管理</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>项目变更</td>
+            <td>变更申请、变更审批、变更记录</td>
+            <td>支持项目内容、经费、时间等变更</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>中期检查</td>
+            <td>材料提交、专家评审、整改意见</td>
+            <td>支持项目中期检查和评估</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>年度检查</td>
+            <td>年报提交、材料审核、检查评价</td>
+            <td>支持项目年度工作检查</td>
+        </tr>
+        <tr>
+            <td>8</td>
+            <td>结题验收</td>
+            <td>验收申请、验收评审、成果归档</td>
+            <td>支持项目结题验收和成果管理</td>
+        </tr>
+        <tr>
+            <td>9</td>
+            <td>成果管理</td>
+            <td>成果登记、成果审核、成果鉴定</td>
+            <td>支持科研成果的统一管理</td>
+        </tr>
+        <tr>
+            <td>10</td>
+            <td>专家管理</td>
+            <td>专家入库、专家抽取、评审管理</td>
+            <td>支持专家库管理和智能抽取</td>
+        </tr>
+        <tr>
+            <td>11</td>
+            <td>资源共享</td>
+            <td>数据共享、软件共享、仪器共享</td>
+            <td>支持科研资源的共享利用</td>
+        </tr>
+        <tr>
+            <td>12</td>
+            <td>综合分析</td>
+            <td>项目统计、经费分析、成果分析</td>
+            <td>提供多维度数据分析</td>
+        </tr>
+        <tr>
+            <td>13</td>
+            <td>流程引擎</td>
+            <td>流程设计、流程配置、流程监控</td>
+            <td>支持可视化流程配置</td>
+        </tr>
+        <tr>
+            <td>14</td>
+            <td>权限管理</td>
+            <td>角色管理、用户管理、权限配置</td>
+            <td>支持页面按钮级权限控制</td>
+        </tr>
+        <tr>
+            <td>15</td>
+            <td>系统管理</td>
+            <td>机构管理、字典管理、日志管理</td>
+            <td>支持系统基础配置管理</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>1.4.2 用户范围</h3>
+<p>系统支持以下用户角色：</p>
+<ul>
+    <li><strong>监测监管用户：</strong>负责项目的全流程监管，包括需求审核、立项审批、过程监管、验收评审等。</li>
+    <li><strong>科研机构用户：</strong>包括项目负责人、项目成员等，负责项目申报、材料提交、进度报告等。</li>
+    <li><strong>专家用户：</strong>参与项目评审、中期检查、结题验收等工作。</li>
+    <li><strong>系统管理员：</strong>负责系统配置、用户管理、权限分配等工作。</li>
+</ul>
+
+<h2>1.5 技术架构</h2>
+
+<h3>1.5.1 总体架构</h3>
+<p>系统采用前后端分离的技术架构，前端使用Next.js 16框架，后端使用Spring Boot 3.2框架，数据库使用人大金仓KingbaseES。系统部署在麒麟操作系统上，确保国产化要求。</p>
+
+<div class="figure">
+    <div style="padding: 60px; background: #f5f5f5; border: 2px dashed #ccc; text-align: center;">
+        <h3>系统总体架构图</h3>
+        <div style="margin: 40px 0;">
+            <div style="padding: 30px; background: #e3f2fd; margin: 20px; border-radius: 8px;">
+                <strong>前端层（Presentation Layer）</strong><br>
+                Next.js 16 + React 19 + TypeScript + Tailwind CSS
+            </div>
+            <div style="padding: 10px;">↕</div>
+            <div style="padding: 30px; background: #f3e5f5; margin: 20px; border-radius: 8px;">
+                <strong>API网关层（API Gateway）</strong><br>
+                Nginx + SSL + 负载均衡
+            </div>
+            <div style="padding: 10px;">↕</div>
+            <div style="padding: 30px; background: #e8f5e9; margin: 20px; border-radius: 8px;">
+                <strong>应用服务层（Application Layer）</strong><br>
+                Spring Boot 3.2 + Spring Security + MyBatis Plus
+            </div>
+            <div style="padding: 10px;">↕</div>
+            <div style="padding: 30px; background: #fff3e0; margin: 20px; border-radius: 8px;">
+                <strong>数据层（Data Layer）</strong><br>
+                人大金仓 KingbaseES + Redis 缓存
+            </div>
+            <div style="padding: 10px;">↕</div>
+            <div style="padding: 30px; background: #fce4ec; margin: 20px; border-radius: 8px;">
+                <strong>基础设施层（Infrastructure Layer）</strong><br>
+                麒麟操作系统 + Docker + Kubernetes
+            </div>
+        </div>
+    </div>
+    <p class="figure-caption">图1-1 系统总体架构图</p>
+</div>
+
+<h3>1.5.2 技术栈</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>分类</th>
+            <th>技术</th>
+            <th>版本</th>
+            <th>说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="5">前端技术</td>
+            <td>Next.js</td>
+            <td>16.x</td>
+            <td>React全栈框架，支持SSR和SSG</td>
+        </tr>
+        <tr>
+            <td>React</td>
+            <td>19.x</td>
+            <td>UI组件库</td>
+        </tr>
+        <tr>
+            <td>TypeScript</td>
+            <td>5.x</td>
+            <td>类型安全的JavaScript超集</td>
+        </tr>
+        <tr>
+            <td>Tailwind CSS</td>
+            <td>4.x</td>
+            <td>原子化CSS框架</td>
+        </tr>
+        <tr>
+            <td>shadcn/ui</td>
+            <td>Latest</td>
+            <td>基于Radix UI的组件库</td>
+        </tr>
+        <tr>
+            <td rowspan="6">后端技术</td>
+            <td>Spring Boot</td>
+            <td>3.2.x</td>
+            <td>Java应用框架</td>
+        </tr>
+        <tr>
+            <td>Spring Security</td>
+            <td>6.x</td>
+            <td>安全框架</td>
+        </tr>
+        <tr>
+            <td>MyBatis Plus</td>
+            <td>3.5.x</td>
+            <td>ORM框架</td>
+        </tr>
+        <tr>
+            <td>JWT</td>
+            <td>0.12.x</td>
+            <td>身份认证</td>
+        </tr>
+        <tr>
+            <td>Knife4j</td>
+            <td>4.x</td>
+            <td>API文档</td>
+        </tr>
+        <tr>
+            <td>Hutool</td>
+            <td>5.x</td>
+            <td>Java工具库</td>
+        </tr>
+        <tr>
+            <td rowspan="2">数据库</td>
+            <td>人大金仓</td>
+            <td>V8</td>
+            <td>国产关系型数据库</td>
+        </tr>
+        <tr>
+            <td>Redis</td>
+            <td>7.x</td>
+            <td>缓存数据库</td>
+        </tr>
+        <tr>
+            <td rowspan="3">基础设施</td>
+            <td>麒麟操作系统</td>
+            <td>V10</td>
+            <td>国产操作系统</td>
+        </tr>
+        <tr>
+            <td>Nginx</td>
+            <td>1.24.x</td>
+            <td>Web服务器</td>
+        </tr>
+        <tr>
+            <td>Docker</td>
+            <td>24.x</td>
+            <td>容器化技术</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>1.6 项目预期成果</h2>
+<p>通过本项目的建设，将实现以下预期成果：</p>
+<ul>
+    <li>建成一套功能完善、技术先进的科研项目管理系统，实现科研项目全生命周期的数字化管理。</li>
+    <li>提高科研项目管理效率，减少人工操作，降低管理成本。</li>
+    <li>实现科研数据的集中存储和共享，消除信息孤岛。</li>
+    <li>建立完善的权限管理和流程管理体系，规范业务流程。</li>
+    <li>提供丰富的数据分析功能，为科研管理决策提供数据支撑。</li>
+    <li>满足国产化要求，确保系统安全可控。</li>
+</ul>
+
+<!-- 第二章：需求分析 -->
+<h1 id="chapter2">第二章 需求分析</h1>
+
+<h2>2.1 业务需求分析</h2>
+
+<h3>2.1.1 需求征集管理</h3>
+<p>需求征集是科研项目管理的起点，系统需要提供完善的需求征集和管理功能。科研机构可以在线提交科研需求，管理部门对需求进行审核、分类和匹配，形成项目指南。</p>
+
+<div class="note note-info">
+    <div class="note-title">业务流程：</div>
+    <ol>
+        <li>科研机构填写需求征集表，包括需求名称、所属领域、预期水平、技术成熟度等信息。</li>
+        <li>提交需求后，系统自动流转至监管部门审核。</li>
+        <li>监管部门审核需求，可选择通过、不通过或退回修改。</li>
+        <li>审核通过的需求纳入需求库，作为项目申报的依据。</li>
+        <li>系统支持需求匹配功能，将相似需求进行聚类分析。</li>
+    </ol>
+</div>
+
+<h3>2.1.2 项目申报管理</h3>
+<p>项目申报是科研项目立项的前置环节，系统需要支持在线申报、材料上传、查重检测等功能。</p>
+
+<div class="note note-info">
+    <div class="note-title">业务流程：</div>
+    <ol>
+        <li>监管部门发布项目申报指南，明确申报要求和时间节点。</li>
+        <li>科研机构查看申报指南，在线填写申报书。</li>
+        <li>申报书包括项目基本信息、研究内容、技术路线、预算明细等。</li>
+        <li>上传附件材料，如可行性报告、单位资质等。</li>
+        <li>提交前进行查重检测，系统自动生成查重报告。</li>
+        <li>查重率符合要求后，正式提交申报材料。</li>
+        <li>系统记录申报时间，超过截止时间无法提交。</li>
+    </ol>
+</div>
+
+<h3>2.1.3 立项评审管理</h3>
+<p>立项评审是项目审批的核心环节，包括形式审查、专家评审、立项审批等步骤。</p>
+
+<div class="note note-info">
+    <div class="note-title">业务流程：</div>
+    <ol>
+        <li>监管部门对申报材料进行形式审查，检查材料完整性和规范性。</li>
+        <li>形式审查通过后，进入专家评审环节。</li>
+        <li>系统从专家库中抽取评审专家，发送评审通知。</li>
+        <li>专家在线查看申报材料，填写评审意见和评分。</li>
+        <li>支持多轮评审，如初评、复评、答辩等。</li>
+        <li>评审结束后，系统自动汇总评审结果。</li>
+        <li>监管部门根据评审结果进行立项审批。</li>
+        <li>立项通过的项目进入任务书签订环节。</li>
+    </ol>
+</div>
+
+<h3>2.1.4 任务书管理</h3>
+<p>任务书是项目实施的依据，系统需要支持任务拆分、任务书生成、盖章上传、任务书审核等功能。</p>
+
+<div class="note note-info">
+    <div class="note-title">业务流程（分步骤）：</div>
+    <ol>
+        <li><strong>步骤1：拆分任务书</strong> - 项目负责人在线拆分项目任务，包括任务名称、任务类型、负责单位、完成时间、考核指标等。</li>
+        <li><strong>步骤2：导出任务书</strong> - 系统根据任务拆分信息自动生成任务书Word文档，项目负责人下载任务书。</li>
+        <li><strong>步骤3：上传已盖章任务书</strong> - 项目负责人将盖章后的任务书扫描件上传至系统。</li>
+        <li><strong>步骤4：提交审核</strong> - 提交任务书至监管部门审核，审核通过后任务书生效。</li>
+    </ol>
+</div>
+
+<h3>2.1.5 项目变更管理</h3>
+<p>项目实施过程中可能需要变更项目内容、经费、时间等，系统需要支持变更申请和审批。</p>
+
+<h3>2.1.6 中期检查管理</h3>
+<p>中期检查是项目过程监管的重要手段，系统需要支持材料提交、专家评审、整改意见等功能。</p>
+
+<h3>2.1.7 年度检查管理</h3>
+<p>年度检查用于评估项目年度执行情况，系统需要支持年报提交、材料审核、检查评价等功能。</p>
+
+<h3>2.1.8 结题验收管理</h3>
+<p>结题验收是项目结束的标志，系统需要支持验收申请、验收评审、成果归档等功能。</p>
+
+<h3>2.1.9 成果管理</h3>
+<p>成果管理用于统一管理项目产生的科研成果，包括论文、专利、软件著作权等。</p>
+
+<h2>2.2 功能需求分析</h2>
+
+<h3>2.2.1 监测监管端功能需求</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>序号</th>
+            <th>功能模块</th>
+            <th>功能点</th>
+            <th>优先级</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>工作台</td>
+            <td>待办事项、项目概览、快捷入口</td>
+            <td>高</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>需求管理</td>
+            <td>需求审核、需求匹配、需求统计</td>
+            <td>高</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>申报管理</td>
+            <td>指南发布、形式审查、查重检测</td>
+            <td>高</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>立项评审</td>
+            <td>专家抽取、评审管理、立项审批</td>
+            <td>高</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>任务书管理</td>
+            <td>任务书审核、任务书查看</td>
+            <td>高</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>变更管理</td>
+            <td>变更审批、变更记录</td>
+            <td>中</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>中期检查</td>
+            <td>材料审核、专家评审、整改跟踪</td>
+            <td>高</td>
+        </tr>
+        <tr>
+            <td>8</td>
+            <td>年度检查</td>
+            <td>年报审核、检查评价</td>
+            <td>高</td>
+        </tr>
+        <tr>
+            <td>9</td>
+            <td>结题验收</td>
+            <td>验收组织、验收评审、成果归档</td>
+            <td>高</td>
+        </tr>
+        <tr>
+            <td>10</td>
+            <td>项目库管理</td>
+            <td>项目查询、项目档案、项目统计</td>
+            <td>中</td>
+        </tr>
+        <tr>
+            <td>11</td>
+            <td>成果管理</td>
+            <td>成果审核、成果鉴定、成果统计</td>
+            <td>中</td>
+        </tr>
+        <tr>
+            <td>12</td>
+            <td>资源共享</td>
+            <td>资源审核、资源发布</td>
+            <td>低</td>
+        </tr>
+        <tr>
+            <td>13</td>
+            <td>综合分析</td>
+            <td>项目统计、经费分析、成果分析</td>
+            <td>中</td>
+        </tr>
+        <tr>
+            <td>14</td>
+            <td>配置管理</td>
+            <td>申报配置、评分规则、字典管理、流程配置</td>
+            <td>高</td>
+        </tr>
+        <tr>
+            <td>15</td>
+            <td>专家管理</td>
+            <td>专家审核、专家维护</td>
+            <td>高</td>
+        </tr>
+        <tr>
+            <td>16</td>
+            <td>系统管理</td>
+            <td>用户管理、角色管理、机构管理、权限管理</td>
+            <td>高</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>2.2.2 科研机构端功能需求</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>序号</th>
+            <th>功能模块</th>
+            <th>功能点</th>
+            <th>优先级</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>工作台</td>
+            <td>待办事项、项目概览、消息通知</td>
+            <td>高</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>需求征集</td>
+            <td>需求填报、需求查询</td>
+            <td>中</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>项目申报</td>
+            <td>查看指南、在线申报、查重检测、申报查询</td>
+            <td>高</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>我的项目</td>
+            <td>项目列表、项目详情、项目进度</td>
+            <td>高</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>任务书管理</td>
+            <td>任务拆分、任务书导出、任务书上传、提交审核</td>
+            <td>高</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>项目变更</td>
+            <td>变更申请、变更进度查询</td>
+            <td>中</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>中期检查</td>
+            <td>材料提交、检查结果查看</td>
+            <td>高</td>
+        </tr>
+        <tr>
+            <td>8</td>
+            <td>年度检查</td>
+            <td>年报提交、检查结果查看</td>
+            <td>高</td>
+        </tr>
+        <tr>
+            <td>9</td>
+            <td>结题验收</td>
+            <td>验收申请、材料提交、验收结果查看</td>
+            <td>高</td>
+        </tr>
+        <tr>
+            <td>10</td>
+            <td>成果管理</td>
+            <td>成果登记、成果查询</td>
+            <td>中</td>
+        </tr>
+        <tr>
+            <td>11</td>
+            <td>资源共享</td>
+            <td>资源查询、资源申请</td>
+            <td>低</td>
+        </tr>
+        <tr>
+            <td>12</td>
+            <td>系统管理</td>
+            <td>人员管理、资质管理</td>
+            <td>中</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>2.2.3 专家端功能需求</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>序号</th>
+            <th>功能模块</th>
+            <th>功能点</th>
+            <th>优先级</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>工作台</td>
+            <td>待评审任务、评审历史</td>
+            <td>高</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>立项评审</td>
+            <td>查看申报材料、填写评审意见、提交评分</td>
+            <td>高</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>中期检查</td>
+            <td>查看检查材料、填写检查意见</td>
+            <td>高</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>结题验收</td>
+            <td>查看验收材料、填写验收意见</td>
+            <td>高</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>成果鉴定</td>
+            <td>查看成果材料、填写鉴定意见</td>
+            <td>中</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>个人信息</td>
+            <td>信息维护、密码修改</td>
+            <td>中</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>2.3 非功能需求分析</h2>
+
+<h3>2.3.1 性能需求</h3>
+<ul>
+    <li><strong>响应时间：</strong>页面响应时间不超过2秒，查询操作不超过3秒。</li>
+    <li><strong>并发用户：</strong>系统支持500个并发用户在线操作。</li>
+    <li><strong>数据容量：</strong>系统支持存储10万条项目数据和100万条业务数据。</li>
+    <li><strong>数据吞吐量：</strong>系统支持每秒处理1000次数据库操作。</li>
+</ul>
+
+<h3>2.3.2 安全需求</h3>
+<ul>
+    <li><strong>身份认证：</strong>采用用户名密码认证，支持JWT令牌机制。</li>
+    <li><strong>权限控制：</strong>实现页面按钮级的细粒度权限控制。</li>
+    <li><strong>数据加密：</strong>敏感数据加密存储，数据传输使用HTTPS协议。</li>
+    <li><strong>日志审计：</strong>记录用户操作日志，支持日志查询和审计。</li>
+    <li><strong>防攻击：</strong>防止SQL注入、XSS攻击、CSRF攻击等。</li>
+</ul>
+
+<h3>2.3.3 可用性需求</h3>
+<ul>
+    <li><strong>系统可用性：</strong>系统可用性达到99.5%以上。</li>
+    <li><strong>故障恢复：</strong>系统故障后能在30分钟内恢复。</li>
+    <li><strong>数据备份：</strong>每日自动备份数据，保留30天备份数据。</li>
+</ul>
+
+<h3>2.3.4 可扩展性需求</h3>
+<ul>
+    <li>系统采用模块化设计，支持功能模块的灵活扩展。</li>
+    <li>支持与其他业务系统的接口对接。</li>
+    <li>支持横向扩展，满足业务增长需求。</li>
+</ul>
+
+<h3>2.3.5 兼容性需求</h3>
+<ul>
+    <li><strong>操作系统：</strong>支持麒麟操作系统V10、Windows Server 2016及以上。</li>
+    <li><strong>浏览器：</strong>支持Chrome、Firefox、Edge等主流浏览器。</li>
+    <li><strong>移动端：</strong>支持响应式设计，兼容移动端访问。</li>
+</ul>
+
+<h3>2.3.6 国产化需求</h3>
+<ul>
+    <li>操作系统使用麒麟操作系统V10。</li>
+    <li>数据库使用人大金仓KingbaseES V8。</li>
+    <li>中间件优先选用国产中间件。</li>
+    <li>系统部署和运行完全基于国产化环境。</li>
+</ul>
+
+<!-- 第三章：系统架构设计 -->
+<h1 id="chapter3">第三章 系统架构设计</h1>
+
+<h2>3.1 总体架构设计</h2>
+
+<p>系统采用分层架构设计，从下到上依次为基础设施层、数据层、应用服务层、API网关层、前端层。各层之间职责清晰，耦合度低，便于系统的开发、测试和维护。</p>
+
+<h3>3.1.1 架构分层</h3>
+
+<div class="figure">
+    <div style="padding: 60px; background: #f5f5f5; border: 2px solid #ddd; border-radius: 8px;">
+        <h3 style="text-align: center; margin-bottom: 40px;">系统分层架构图</h3>
+        <div style="margin: 20px 0;">
+            <div style="padding: 25px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin: 15px; border-radius: 8px; text-align: center;">
+                <h4 style="color: white;">前端层（Presentation Layer）</h4>
+                <p style="text-indent: 0; margin: 10px 0;">Next.js 16, React 19, TypeScript, Tailwind CSS</p>
+                <p style="text-indent: 0; font-size: 12pt;">提供用户界面，实现业务逻辑展示和用户交互</p>
+            </div>
+            <div style="text-align: center; padding: 10px; font-size: 24pt; color: #667eea;">↓</div>
+            <div style="padding: 25px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; margin: 15px; border-radius: 8px; text-align: center;">
+                <h4 style="color: white;">API网关层（API Gateway Layer）</h4>
+                <p style="text-indent: 0; margin: 10px 0;">Nginx, SSL/TLS, 负载均衡, 反向代理</p>
+                <p style="text-indent: 0; font-size: 12pt;">统一API入口，实现路由转发、负载均衡、安全认证</p>
+            </div>
+            <div style="text-align: center; padding: 10px; font-size: 24pt; color: #667eea;">↓</div>
+            <div style="padding: 25px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; margin: 15px; border-radius: 8px; text-align: center;">
+                <h4 style="color: white;">应用服务层（Application Layer）</h4>
+                <p style="text-indent: 0; margin: 10px 0;">Spring Boot 3.2, Spring Security, MyBatis Plus, JWT</p>
+                <p style="text-indent: 0; font-size: 12pt;">实现业务逻辑处理、数据访问、权限控制、流程管理</p>
+            </div>
+            <div style="text-align: center; padding: 10px; font-size: 24pt; color: #667eea;">↓</div>
+            <div style="padding: 25px; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; margin: 15px; border-radius: 8px; text-align: center;">
+                <h4 style="color: white;">数据层（Data Layer）</h4>
+                <p style="text-indent: 0; margin: 10px 0;">人大金仓 KingbaseES V8, Redis 7.x</p>
+                <p style="text-indent: 0; font-size: 12pt;">提供数据存储、数据缓存、数据备份</p>
+            </div>
+            <div style="text-align: center; padding: 10px; font-size: 24pt; color: #667eea;">↓</div>
+            <div style="padding: 25px; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; margin: 15px; border-radius: 8px; text-align: center;">
+                <h4 style="color: white;">基础设施层（Infrastructure Layer）</h4>
+                <p style="text-indent: 0; margin: 10px 0;">麒麟操作系统 V10, Docker, Kubernetes</p>
+                <p style="text-indent: 0; font-size: 12pt;">提供操作系统、容器化、集群管理</p>
+            </div>
+        </div>
+    </div>
+    <p class="figure-caption">图3-1 系统分层架构图</p>
+</div>
+
+<h3>3.1.2 前端架构</h3>
+<p>前端采用Next.js 16框架，基于React 19和TypeScript开发。Next.js提供服务端渲染（SSR）和静态生成（SSG）能力，提升页面加载速度和SEO效果。使用Tailwind CSS作为样式框架，提供原子化CSS方案，提高开发效率。</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>技术</th>
+            <th>用途</th>
+            <th>优势</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Next.js 16</td>
+            <td>React全栈框架</td>
+            <td>支持SSR/SSG，提升性能和SEO</td>
+        </tr>
+        <tr>
+            <td>React 19</td>
+            <td>UI组件库</td>
+            <td>声明式编程，组件化开发</td>
+        </tr>
+        <tr>
+            <td>TypeScript</td>
+            <td>类型系统</td>
+            <td>类型安全，减少运行时错误</td>
+        </tr>
+        <tr>
+            <td>Tailwind CSS</td>
+            <td>样式框架</td>
+            <td>原子化CSS，快速开发</td>
+        </tr>
+        <tr>
+            <td>shadcn/ui</td>
+            <td>UI组件库</td>
+            <td>基于Radix UI，高质量组件</td>
+        </tr>
+        <tr>
+            <td>SWR</td>
+            <td>数据获取库</td>
+            <td>自动缓存、重新验证</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>3.1.3 后端架构</h3>
+<p>后端采用Spring Boot 3.2框架，基于Java 17开发。使用MyBatis Plus作为ORM框架，简化数据库操作。使用Spring Security和JWT实现认证和授权。</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>技术</th>
+            <th>用途</th>
+            <th>优势</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Spring Boot 3.2</td>
+            <td>应用框架</td>
+            <td>快速开发，自动配置</td>
+        </tr>
+        <tr>
+            <td>Spring Security</td>
+            <td>安全框架</td>
+            <td>完善的认证授权机制</td>
+        </tr>
+        <tr>
+            <td>MyBatis Plus</td>
+            <td>ORM框架</td>
+            <td>简化CRUD操作，提供代码生成器</td>
+        </tr>
+        <tr>
+            <td>JWT</td>
+            <td>身份认证</td>
+            <td>无状态认证，支持分布式</td>
+        </tr>
+        <tr>
+            <td>Redis</td>
+            <td>缓存</td>
+            <td>提升查询性能，支持分布式session</td>
+        </tr>
+        <tr>
+            <td>Knife4j</td>
+            <td>API文档</td>
+            <td>自动生成API文档，支持在线调试</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>3.2 系统部署架构</h2>
+
+<h3>3.2.1 生产环境部署架构</h3>
+
+<div class="figure">
+    <div style="padding: 60px; background: #f5f5f5; border: 2px solid #ddd; border-radius: 8px;">
+        <h3 style="text-align: center; margin-bottom: 40px;">生产环境部署架构图</h3>
+        <div style="margin: 40px 0;">
+            <div style="padding: 20px; background: #e3f2fd; margin: 15px; border-radius: 8px;">
+                <strong>负载均衡层</strong><br>
+                Nginx 负载均衡器（主备）<br>
+                <small>- 负责流量分发</small><br>
+                <small>- 实现高可用</small>
+            </div>
+            <div style="text-align: center; padding: 10px;">↓</div>
+            <div style="display: flex; gap: 20px; margin: 15px;">
+                <div style="flex: 1; padding: 20px; background: #f3e5f5; border-radius: 8px;">
+                    <strong>Web服务器1</strong><br>
+                    Next.js应用<br>
+                    <small>- 前端渲染</small>
+                </div>
+                <div style="flex: 1; padding: 20px; background: #f3e5f5; border-radius: 8px;">
+                    <strong>Web服务器2</strong><br>
+                    Next.js应用<br>
+                    <small>- 前端渲染</small>
+                </div>
+            </div>
+            <div style="text-align: center; padding: 10px;">↓</div>
+            <div style="display: flex; gap: 20px; margin: 15px;">
+                <div style="flex: 1; padding: 20px; background: #e8f5e9; border-radius: 8px;">
+                    <strong>应用服务器1</strong><br>
+                    Spring Boot应用<br>
+                    <small>- 业务处理</small>
+                </div>
+                <div style="flex: 1; padding: 20px; background: #e8f5e9; border-radius: 8px;">
+                    <strong>应用服务器2</strong><br>
+                    Spring Boot应用<br>
+                    <small>- 业务处理</small>
+                </div>
+            </div>
+            <div style="text-align: center; padding: 10px;">↓</div>
+            <div style="display: flex; gap: 20px; margin: 15px;">
+                <div style="flex: 1; padding: 20px; background: #fff3e0; border-radius: 8px;">
+                    <strong>数据库主库</strong><br>
+                    人大金仓 KingbaseES<br>
+                    <small>- 读写操作</small>
+                </div>
+                <div style="flex: 1; padding: 20px; background: #fff3e0; border-radius: 8px; opacity: 0.7;">
+                    <strong>数据库从库</strong><br>
+                    人大金仓 KingbaseES<br>
+                    <small>- 只读操作</small>
+                </div>
+            </div>
+            <div style="padding: 20px; background: #fce4ec; margin: 15px; border-radius: 8px;">
+                <strong>缓存集群</strong><br>
+                Redis Cluster（3主3从）<br>
+                <small>- 数据缓存、Session存储</small>
+            </div>
+        </div>
+    </div>
+    <p class="figure-caption">图3-2 生产环境部署架构图</p>
+</div>
+
+<h3>3.2.2 服务器配置要求</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>服务器类型</th>
+            <th>数量</th>
+            <th>CPU</th>
+            <th>内存</th>
+            <th>硬盘</th>
+            <th>操作系统</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>负载均衡服务器</td>
+            <td>2</td>
+            <td>4核</td>
+            <td>8GB</td>
+            <td>100GB SSD</td>
+            <td>麒麟V10</td>
+        </tr>
+        <tr>
+            <td>Web服务器</td>
+            <td>2</td>
+            <td>8核</td>
+            <td>16GB</td>
+            <td>200GB SSD</td>
+            <td>麒麟V10</td>
+        </tr>
+        <tr>
+            <td>应用服务器</td>
+            <td>2</td>
+            <td>16核</td>
+            <td>32GB</td>
+            <td>500GB SSD</td>
+            <td>麒麟V10</td>
+        </tr>
+        <tr>
+            <td>数据库服务器（主）</td>
+            <td>1</td>
+            <td>16核</td>
+            <td>64GB</td>
+            <td>1TB SSD RAID10</td>
+            <td>麒麟V10</td>
+        </tr>
+        <tr>
+            <td>数据库服务器（从）</td>
+            <td>1</td>
+            <td>16核</td>
+            <td>64GB</td>
+            <td>1TB SSD RAID10</td>
+            <td>麒麟V10</td>
+        </tr>
+        <tr>
+            <td>Redis服务器</td>
+            <td>6</td>
+            <td>8核</td>
+            <td>16GB</td>
+            <td>200GB SSD</td>
+            <td>麒麟V10</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>3.3 网络架构</h2>
+
+<h3>3.3.1 网络拓扑</h3>
+<p>系统采用三层网络架构：接入层、应用层、数据层。接入层部署负载均衡器和防火墙，应用层部署Web服务器和应用服务器，数据层部署数据库和缓存服务器。各层之间通过VLAN隔离，提高安全性。</p>
+
+<h3>3.3.2 安全策略</h3>
+<ul>
+    <li>部署防火墙，限制外部访问，只开放80和443端口。</li>
+    <li>启用SSL/TLS加密，所有HTTP请求强制跳转到HTTPS。</li>
+    <li>应用层和数据层之间采用内网通信，禁止外部直接访问。</li>
+    <li>部署入侵检测系统（IDS），实时监控网络流量。</li>
+    <li>定期进行安全扫描和渗透测试。</li>
+</ul>
+
+<h2>3.4 数据架构</h2>
+
+<h3>3.4.1 数据库设计原则</h3>
+<ul>
+    <li><strong>规范化设计：</strong>遵循第三范式，减少数据冗余。</li>
+    <li><strong>性能优化：</strong>合理使用索引，优化查询性能。</li>
+    <li><strong>安全性：</strong>敏感数据加密存储，实现数据脱敏。</li>
+    <li><strong>可扩展性：</strong>预留扩展字段，便于后续功能扩展。</li>
+</ul>
+
+<h3>3.4.2 数据库架构</h3>
+<p>系统采用人大金仓KingbaseES作为主数据库，Redis作为缓存数据库。人大金仓支持主从复制，实现读写分离。Redis采用集群模式，提供高可用性。</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>数据库</th>
+            <th>类型</th>
+            <th>用途</th>
+            <th>部署模式</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>人大金仓</td>
+            <td>关系型数据库</td>
+            <td>业务数据存储</td>
+            <td>主从复制</td>
+        </tr>
+        <tr>
+            <td>Redis</td>
+            <td>缓存数据库</td>
+            <td>热点数据缓存、Session存储</td>
+            <td>集群模式</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>3.5 安全架构</h2>
+
+<h3>3.5.1 安全层次</h3>
+<p>系统安全设计包括网络安全、应用安全、数据安全三个层次。</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>安全层次</th>
+            <th>安全措施</th>
+            <th>实现技术</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>网络安全</td>
+            <td>防火墙、入侵检测、DDoS防护</td>
+            <td>硬件防火墙、IDS/IPS</td>
+        </tr>
+        <tr>
+            <td>应用安全</td>
+            <td>身份认证、权限控制、数据验证</td>
+            <td>Spring Security、JWT、XSS防护</td>
+        </tr>
+        <tr>
+            <td>数据安全</td>
+            <td>数据加密、数据备份、数据脱敏</td>
+            <td>AES加密、定时备份、字段脱敏</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>3.5.2 身份认证机制</h3>
+<p>系统采用JWT（JSON Web Token）机制实现身份认证。用户登录成功后，服务器签发JWT令牌，客户端在后续请求中携带令牌。服务器验证令牌的有效性，完成身份认证。</p>
+
+<div class="flowchart">
+    <div class="flowchart-title">身份认证流程</div>
+    <div style="text-align: left; max-width: 600px; margin: 0 auto;">
+        <div style="padding: 15px; background: #e3f2fd; margin: 10px 0; border-radius: 4px;">
+            1. 用户输入用户名和密码
+        </div>
+        <div style="text-align: center; padding: 5px;">↓</div>
+        <div style="padding: 15px; background: #f3e5f5; margin: 10px 0; border-radius: 4px;">
+            2. 前端提交登录请求
+        </div>
+        <div style="text-align: center; padding: 5px;">↓</div>
+        <div style="padding: 15px; background: #e8f5e9; margin: 10px 0; border-radius: 4px;">
+            3. 后端验证用户名和密码
+        </div>
+        <div style="text-align: center; padding: 5px;">↓</div>
+        <div style="padding: 15px; background: #fff3e0; margin: 10px 0; border-radius: 4px;">
+            4. 验证通过，签发JWT令牌
+        </div>
+        <div style="text-align: center; padding: 5px;">↓</div>
+        <div style="padding: 15px; background: #fce4ec; margin: 10px 0; border-radius: 4px;">
+            5. 前端存储令牌到LocalStorage
+        </div>
+        <div style="text-align: center; padding: 5px;">↓</div>
+        <div style="padding: 15px; background: #e1f5fe; margin: 10px 0; border-radius: 4px;">
+            6. 后续请求携带令牌进行身份验证
+        </div>
+    </div>
+</div>
+
+<h3>3.5.3 权限控制机制</h3>
+<p>系统实现基于RBAC（Role-Based Access Control）的权限控制模型，支持页面按钮级的细粒度权限控制。</p>
+
+<ul>
+    <li><strong>角色管理：</strong>系统预定义超级管理员、监管管理员、科研机构管理员、专家等角色，管理员可自定义角色。</li>
+    <li><strong>权限管理：</strong>权限包括菜单权限、页面权限、按钮权限、数据权限。</li>
+    <li><strong>用户授权：</strong>为用户分配角色，用户继承角色的所有权限。</li>
+    <li><strong>权限验证：</strong>前端根据权限控制菜单和按钮显示，后端在接口层进行权限验证。</li>
+</ul>
+
+<!-- 第四章：界面原型设计 -->
+<h1 id="chapter4">第四章 界面原型设计</h1>
+
+<h2>4.1 设计规范</h2>
+
+<h3>4.1.1 设计原则</h3>
+<ul>
+    <li><strong>一致性：</strong>保持界面风格、交互方式、术语表达的一致性。</li>
+    <li><strong>简洁性：</strong>界面简洁清爽，避免信息过载。</li>
+    <li><strong>易用性：</strong>操作流程清晰，降低用户学习成本。</li>
+    <li><strong>反馈性：</strong>及时反馈操作结果，增强用户体验。</li>
+    <li><strong>容错性：</strong>防止用户误操作，提供撤销和恢复功能。</li>
+</ul>
+
+<h3>4.1.2 色彩规范</h3>
+<table>
+    <thead>
+        <tr>
+            <th>颜色名称</th>
+            <th>色值</th>
+            <th>用途</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="background: #667eea; color: white;">主色</td>
+            <td>#667eea</td>
+            <td>主要按钮、链接、强调元素</td>
+        </tr>
+        <tr>
+            <td style="background: #764ba2; color: white;">辅助色</td>
+            <td>#764ba2</td>
+            <td>二级标题、辅助元素</td>
+        </tr>
+        <tr>
+            <td style="background: #52c41a; color: white;">成功色</td>
+            <td>#52c41a</td>
+            <td>成功提示、通过状态</td>
+        </tr>
+        <tr>
+            <td style="background: #faad14; color: white;">警告色</td>
+            <td>#faad14</td>
+            <td>警告提示、待处理状态</td>
+        </tr>
+        <tr>
+            <td style="background: #f5222d; color: white;">错误色</td>
+            <td>#f5222d</td>
+            <td>错误提示、拒绝状态</td>
+        </tr>
+        <tr>
+            <td style="background: #333; color: white;">文本主色</td>
+            <td>#333333</td>
+            <td>主要文本内容</td>
+        </tr>
+        <tr>
+            <td style="background: #666; color: white;">文本辅色</td>
+            <td>#666666</td>
+            <td>次要文本内容</td>
+        </tr>
+        <tr>
+            <td style="background: #999; color: white;">文本禁用</td>
+            <td>#999999</td>
+            <td>禁用状态文本</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>4.1.3 字体规范</h3>
+<table>
+    <thead>
+        <tr>
+            <th>字体类型</th>
+            <th>字体大小</th>
+            <th>用途</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>特大标题</td>
+            <td>32px</td>
+            <td>页面主标题</td>
+        </tr>
+        <tr>
+            <td>大标题</td>
+            <td>24px</td>
+            <td>模块标题</td>
+        </tr>
+        <tr>
+            <td>中标题</td>
+            <td>18px</td>
+            <td>卡片标题、表格标题</td>
+        </tr>
+        <tr>
+            <td>小标题</td>
+            <td>16px</td>
+            <td>表单标签、列表标题</td>
+        </tr>
+        <tr>
+            <td>正文</td>
+            <td>14px</td>
+            <td>正文内容</td>
+        </tr>
+        <tr>
+            <td>辅助文字</td>
+            <td>12px</td>
+            <td>提示信息、说明文字</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>4.1.4 间距规范</h3>
+<ul>
+    <li><strong>页面边距：</strong>24px</li>
+    <li><strong>模块间距：</strong>20px</li>
+    <li><strong>卡片内边距：</strong>16px</li>
+    <li><strong>表单行间距：</strong>16px</li>
+    <li><strong>按钮间距：</strong>8px</li>
+</ul>
+
+<h2>4.2 登录注册模块原型</h2>
+
+<h3>4.2.1 登录页面</h3>
+
+<div class="screenshot">
+    <h4>4.2.1-1 系统登录页面</h4>
+    <div style="padding: 60px; background: #f0f2f5; border: 2px solid #d9d9d9; border-radius: 8px; min-height: 500px;">
+        <div style="max-width: 400px; margin: 0 auto; padding: 40px; background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <div style="text-align: center; margin-bottom: 40px;">
+                <div style="width: 60px; height: 60px; background: #667eea; border-radius: 12px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; font-weight: bold;">科</div>
+                <h2 style="margin: 0; color: #333;">科研项目管理系统</h2>
+                <p style="margin: 10px 0 0; color: #999; text-indent: 0;">Research Project Management System</p>
+            </div>
+            <div style="margin: 20px 0;">
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666;">用户名</label>
+                    <input type="text" placeholder="请输入用户名" style="width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 14px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666;">密码</label>
+                    <input type="password" placeholder="请输入密码" style="width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 14px;">
+                </div>
+                <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <label style="color: #666; font-size: 14px;">
+                        <input type="checkbox" style="margin-right: 5px;"> 记住密码
+                    </label>
+                    <a href="#" style="color: #667eea; font-size: 14px; text-decoration: none;">忘记密码？</a>
+                </div>
+                <button style="width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;">登录</button>
+            </div>
+            <div style="text-align: center; margin-top: 20px; color: #999; font-size: 14px;">
+                还没有账号？<a href="#" style="color: #667eea; text-decoration: none;">立即注册</a>
+            </div>
+        </div>
+    </div>
+    <div class="description">
+        <h4>功能说明：</h4>
+        <ul>
+            <li>用户输入用户名和密码进行登录</li>
+            <li>支持"记住密码"功能，下次自动填充</li>
+            <li>提供"忘记密码"链接，引导用户重置密码</li>
+            <li>提供"立即注册"链接，引导新用户注册</li>
+            <li>登录成功后跳转到对应端首页（科研端/监管端/专家端）</li>
+        </ul>
+        <h4>字段说明：</h4>
+        <ul>
+            <li><strong>用户名：</strong>必填，支持字母、数字、下划线</li>
+            <li><strong>密码：</strong>必填，长度6-20位</li>
+        </ul>
+    </div>
+</div>
+
+<h3>4.2.2 注册页面</h3>
+
+<div class="screenshot">
+    <h4>4.2.2-1 用户注册页面</h4>
+    <div style="padding: 60px; background: #f0f2f5; border: 2px solid #d9d9d9; border-radius: 8px; min-height: 600px;">
+        <div style="max-width: 500px; margin: 0 auto; padding: 40px; background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #333;">用户注册</h2>
+            <div style="margin: 20px 0;">
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666;">用户名 <span style="color: red;">*</span></label>
+                    <input type="text" placeholder="请输入用户名" style="width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 4px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666;">密码 <span style="color: red;">*</span></label>
+                    <input type="password" placeholder="请输入密码" style="width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 4px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666;">确认密码 <span style="color: red;">*</span></label>
+                    <input type="password" placeholder="请再次输入密码" style="width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 4px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666;">单位名称 <span style="color: red;">*</span></label>
+                    <input type="text" placeholder="请输入单位名称" style="width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 4px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666;">联系人 <span style="color: red;">*</span></label>
+                    <input type="text" placeholder="请输入联系人姓名" style="width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 4px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666;">联系电话 <span style="color: red;">*</span></label>
+                    <input type="tel" placeholder="请输入联系电话" style="width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 4px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666;">邮箱</label>
+                    <input type="email" placeholder="请输入邮箱地址" style="width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 4px;">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="color: #666; font-size: 14px;">
+                        <input type="checkbox" style="margin-right: 5px;"> 我已阅读并同意<a href="#" style="color: #667eea; text-decoration: none;">《用户协议》</a>和<a href="#" style="color: #667eea; text-decoration: none;">《隐私政策》</a>
+                    </label>
+                </div>
+                <button style="width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer;">注册</button>
+            </div>
+            <div style="text-align: center; margin-top: 20px; color: #999; font-size: 14px;">
+                已有账号？<a href="#" style="color: #667eea; text-decoration: none;">立即登录</a>
+            </div>
+        </div>
+    </div>
+    <div class="description">
+        <h4>功能说明：</h4>
+        <ul>
+            <li>用户填写注册信息，包括用户名、密码、单位名称、联系人等</li>
+            <li>密码需输入两次，确保一致性</li>
+            <li>用户需勾选同意用户协议和隐私政策</li>
+            <li>注册成功后需管理员审核通过才能登录</li>
+        </ul>
+    </div>
+</div>
+
+<h2>4.3 科研端界面原型</h2>
+
+<h3>4.3.1 科研端首页</h3>
+
+<div class="screenshot">
+    <h4>4.3.1-1 科研端工作台</h4>
+    <div style="padding: 20px; background: #f0f2f5; border: 2px solid #d9d9d9; border-radius: 8px; min-height: 600px;">
+        <!-- 顶部导航栏 -->
+        <div style="padding: 15px 20px; background: white; margin-bottom: 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div style="width: 40px; height: 40px; background: #667eea; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">科</div>
+                <h3 style="margin: 0; color: #333;">科研项目管理系统</h3>
+            </div>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <span style="color: #666;">欢迎您，张三</span>
+                <button style="padding: 8px 16px; background: #f5f5f5; border: 1px solid #d9d9d9; border-radius: 4px; cursor: pointer;">退出登录</button>
+            </div>
+        </div>
+        
+        <!-- 主内容区 -->
+        <div style="display: flex; gap: 20px;">
+            <!-- 左侧菜单 -->
+            <div style="width: 220px; background: white; border-radius: 8px; padding: 20px;">
+                <div style="padding: 10px; background: #667eea; color: white; border-radius: 4px; margin-bottom: 10px; cursor: pointer;">
+                    🏠 工作台
+                </div>
+                <div style="padding: 10px; color: #666; margin-bottom: 5px; cursor: pointer;">
+                    📝 需求征集
+                </div>
+                <div style="padding: 10px; color: #666; margin-bottom: 5px; cursor: pointer;">
+                    📋 项目申报
+                </div>
+                <div style="padding: 10px; color: #666; margin-bottom: 5px; cursor: pointer;">
+                    📊 我的项目
+                </div>
+                <div style="padding: 10px; color: #666; margin-bottom: 5px; cursor: pointer;">
+                    📑 任务书管理
+                </div>
+                <div style="padding: 10px; color: #666; margin-bottom: 5px; cursor: pointer;">
+                    🔄 项目变更
+                </div>
+                <div style="padding: 10px; color: #666; margin-bottom: 5px; cursor: pointer;">
+                    ✅ 中期检查
+                </div>
+                <div style="padding: 10px; color: #666; margin-bottom: 5px; cursor: pointer;">
+                    📅 年度检查
+                </div>
+                <div style="padding: 10px; color: #666; margin-bottom: 5px; cursor: pointer;">
+                    🎯 结题验收
+                </div>
+                <div style="padding: 10px; color: #666; margin-bottom: 5px; cursor: pointer;">
+                    🏆 成果管理
+                </div>
+            </div>
+            
+            <!-- 右侧内容 -->
+            <div style="flex: 1;">
+                <!-- 统计卡片 -->
+                <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                    <div style="flex: 1; padding: 25px; background: white; border-radius: 8px; border-left: 4px solid #667eea;">
+                        <div style="color: #999; font-size: 14px; margin-bottom: 10px;">进行中项目</div>
+                        <div style="font-size: 32px; font-weight: bold; color: #333;">8</div>
+                    </div>
+                    <div style="flex: 1; padding: 25px; background: white; border-radius: 8px; border-left: 4px solid #52c41a;">
+                        <div style="color: #999; font-size: 14px; margin-bottom: 10px;">已完成项目</div>
+                        <div style="font-size: 32px; font-weight: bold; color: #333;">15</div>
+                    </div>
+                    <div style="flex: 1; padding: 25px; background: white; border-radius: 8px; border-left: 4px solid #faad14;">
+                        <div style="color: #999; font-size: 14px; margin-bottom: 10px;">待处理事项</div>
+                        <div style="font-size: 32px; font-weight: bold; color: #333;">5</div>
+                    </div>
+                    <div style="flex: 1; padding: 25px; background: white; border-radius: 8px; border-left: 4px solid #f5222d;">
+                        <div style="color: #999; font-size: 14px; margin-bottom: 10px;">逾期事项</div>
+                        <div style="font-size: 32px; font-weight: bold; color: #333;">2</div>
+                    </div>
+                </div>
+                
+                <!-- 待办事项 -->
+                <div style="padding: 25px; background: white; border-radius: 8px; margin-bottom: 20px;">
+                    <h3 style="margin: 0 0 20px 0; color: #333;">待办事项</h3>
+                    <div style="padding: 15px; background: #f9f9f9; border-radius: 4px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: bold; color: #333; margin-bottom: 5px;">项目中期检查材料提交</div>
+                            <div style="font-size: 12px; color: #999;">项目名称：****项目数据融合技术研究</div>
+                        </div>
+                        <button style="padding: 6px 16px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">去处理</button>
+                    </div>
+                    <div style="padding: 15px; background: #f9f9f9; border-radius: 4px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: bold; color: #333; margin-bottom: 5px;">任务书签订</div>
+                            <div style="font-size: 12px; color: #999;">项目名称：****试点关键技术研究</div>
+                        </div>
+                        <button style="padding: 6px 16px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">去处理</button>
+                    </div>
+                </div>
+                
+                <!-- 项目列表 -->
+                <div style="padding: 25px; background: white; border-radius: 8px;">
+                    <h3 style="margin: 0 0 20px 0; color: #333;">我的项目</h3>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f5f5f5;">
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e8e8e8;">项目编号</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e8e8e8;">项目名称</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e8e8e8;">项目状态</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e8e8e8;">开始时间</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e8e8e8;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">2024KY01</td>
+                                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">****项目数据融合技术研究</td>
+                                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><span style="padding: 4px 8px; background: #52c41a; color: white; border-radius: 4px; font-size: 12px;">执行中</span></td>
+                                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">2024-01-01</td>
+                                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><a href="#" style="color: #667eea; text-decoration: none;">查看详情</a></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">2024KY02</td>
+                                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">****试点关键技术研究</td>
+                                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><span style="padding: 4px 8px; background: #faad14; color: white; border-radius: 4px; font-size: 12px;">立项中</span></td>
+                                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;">-</td>
+                                <td style="padding: 12px; border-bottom: 1px solid #f0f0f0;"><a href="#" style="color: #667eea; text-decoration: none;">查看详情</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="description">
+        <h4>功能说明：</h4>
+        <ul>
+            <li>展示项目统计数据，包括进行中项目、已完成项目、待处理事项、逾期事项</li>
+            <li>显示待办事项列表，用户可快速跳转到待处理任务</li>
+            <li>显示我的项目列表，展示项目基本信息和状态</li>
+            <li>左侧菜单提供快捷导航功能</li>
+        </ul>
+    </div>
+</div>
+
+<h3>4.3.2 项目申报页面</h3>
+
+<div class="screenshot">
+    <h4>4.3.2-1 项目申报表单（基于您提供的截图设计）</h4>
+    <img src="/images/image.jpg" alt="项目申报页面" style="width: 100%; border: 2px solid #ddd; border-radius: 4px;">
+    <div class="description">
+        <h4>功能说明：</h4>
+        <ul>
+            <li>填写项目基本信息，包括项目名称、项目类型、起止时间、经费预算等</li>
+            <li>填写项目承担单位信息，支持多个参与单位</li>
+            <li>填写项目负责人及团队成员信息</li>
+            <li>填写项目研究内容、技术路线、预期成果等</li>
+            <li>上传附件材料，如可行性报告、单位资质等</li>
+            <li>支持保存草稿和提交功能</li>
+            <li>提交前进行查重检测，确保原创性</li>
+        </ul>
+    </div>
+</div>
+
+<h3>4.3.3 任务书管理页面</h3>
+
+<div class="screenshot">
+    <h4>4.3.3-1 任务书管理列表（基于您提供的截图设计）</h4>
+    <img src="/images/image.jpg" alt="任务书管理页面" style="width: 100%; border: 2px solid #ddd; border-radius: 4px;">
+    <div class="description">
+        <h4>功能说明：</h4>
+        <ul>
+            <li>显示任务书列表，包括项目编号、项目名称、任务书状态等</li>
+            <li>根据任务书状态显示不同的操作按钮：
+                <ul>
+                    <li>待签订：任务拆分、任务书上传、提交审核</li>
+                    <li>流程中：查看进度</li>
+                    <li>已签订：详情、项目变更</li>
+                </ul>
+            </li>
+            <li>支持筛选和搜索功能</li>
+        </ul>
+    </div>
+</div>
+
+<div class="screenshot">
+    <h4>4.3.3-2 任务拆分页面（分步骤向导）</h4>
+    <div style="padding: 20px; background: #f0f2f5; border: 2px solid #d9d9d9; border-radius: 8px; min-height: 600px;">
+        <!-- 步骤指示器 -->
+        <div style="padding: 30px; background: white; margin-bottom: 20px; border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; max-width: 800px; margin: 0 auto;">
+                <div style="text-align: center; flex: 1;">
+                    <div style="width: 40px; height: 40px; background: #667eea; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-weight: bold;">1</div>
+                    <div style="font-size: 14px; color: #667eea; font-weight: bold;">拆分任务书</div>
+                </div>
+                <div style="flex: 0 0 80px; height: 2px; background: #d9d9d9; margin: 0 10px 25px;"></div>
+                <div style="text-align: center; flex: 1;">
+                    <div style="width: 40px; height: 40px; background: #d9d9d9; color: #999; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-weight: bold;">2</div>
+                    <div style="font-size: 14px; color: #999;">导出任务书</div>
+                </div>
+                <div style="flex: 0 0 80px; height: 2px; background: #d9d9d9; margin: 0 10px 25px;"></div>
+                <div style="text-align: center; flex: 1;">
+                    <div style="width: 40px; height: 40px; background: #d9d9d9; color: #999; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-weight: bold;">3</div>
+                    <div style="font-size: 14px; color: #999;">上传盖章任务书</div>
+                </div>
+                <div style="flex: 0 0 80px; height: 2px; background: #d9d9d9; margin: 0 10px 25px;"></div>
+                <div style="text-align: center; flex: 1;">
+                    <div style="width: 40px; height: 40px; background: #d9d9d9; color: #999; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-weight: bold;">4</div>
+                    <div style="font-size: 14px; color: #999;">提交审核</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 步骤1内容：拆分任务书 -->
+        <div style="padding: 30px; background: white; border-radius: 8px;">
+            <h3 style="margin: 0 0 20px 0; color: #333;">步骤1：拆分任务书</h3>
+            <div style="margin-bottom: 20px; padding: 15px; background: #e6f7ff; border: 1px solid #91d5ff; border-radius: 4px; color: #0050b3;">
+                请将项目任务分解为多个子任务，明确每个子任务的负责单位、负责人、完成时间等信息。
+            </div>
+            
+            <button style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 4px; margin-bottom: 20px; cursor: pointer;">+ 添加任务</button>
+            
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f5f5f5;">
+                        <th style="padding: 12px; border: 1px solid #d9d9d9;">序号</th>
+                        <th style="padding: 12px; border: 1px solid #d9d9d9;">任务名称</th>
+                        <th style="padding: 12px; border: 1px solid #d9d9d9;">任务类型</th>
+                        <th style="padding: 12px; border: 1px solid #d9d9d9;">负责单位</th>
+                        <th style="padding: 12px; border: 1px solid #d9d9d9;">负责人</th>
+                        <th style="padding: 12px; border: 1px solid #d9d9d9;">开始时间</th>
+                        <th style="padding: 12px; border: 1px solid #d9d9d9;">结束时间</th>
+                        <th style="padding: 12px; border: 1px solid #d9d9d9;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9; text-align: center;">1</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">项目调研</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">里程碑节点</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">****研究院</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">张三</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">2024-01-01</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">2024-03-31</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9; text-align: center;">
+                            <a href="#" style="color: #667eea; margin-right: 10px;">编辑</a>
+                            <a href="#" style="color: #f5222d;">删除</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div style="margin-top: 30px; text-align: right;">
+                <button style="padding: 10px 20px; background: #f5f5f5; border: 1px solid #d9d9d9; border-radius: 4px; margin-right: 10px; cursor: pointer;">取消</button>
+                <button style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">下一步</button>
+            </div>
+        </div>
+    </div>
+    <div class="description">
+        <h4>功能说明（分步骤向导）：</h4>
+        <ul>
+            <li><strong>步骤1：拆分任务书</strong> - 项目负责人添加和编辑任务列表</li>
+            <li><strong>步骤2：导出任务书</strong> - 系统根据任务信息生成任务书Word文档供下载</li>
+            <li><strong>步骤3：上传盖章任务书</strong> - 上传盖章后的任务书扫描件</li>
+            <li><strong>步骤4：提交审核</strong> - 提交至监管部门审核，审核通过后任务书生效</li>
+        </ul>
+    </div>
+</div>
+
+<h3>4.3.4 中期检查页面</h3>
+
+<div class="screenshot">
+    <h4>4.3.4-1 中期检查列表（基于您提供的截图设计）</h4>
+    <img src="/images/image.jpg" alt="中期检查列表" style="width: 100%; border: 2px solid #ddd; border-radius: 4px;">
+    <div class="description">
+        <h4>功能说明：</h4>
+        <ul>
+            <li>显示中期检查项目列表，包括项目编号、项目名称、检查状态等</li>
+            <li>根据状态显示不同操作：
+                <ul>
+                    <li>未提交：提交材料、提交审批</li>
+                    <li>待审批：查看、审批进度</li>
+                    <li>已通过：查看详情、审批历史</li>
+                </ul>
+            </li>
+            <li>支持批量操作和导出功能</li>
+        </ul>
+    </div>
+</div>
+
+<div class="screenshot">
+    <h4>4.3.4-2 中期检查材料提交（基于您提供的截图优化设计）</h4>
+    <img src="/images/image.jpg" alt="中期检查材料提交" style="width: 100%; border: 2px solid #ddd; border-radius: 4px;">
+    <div class="description">
+        <h4>功能说明：</h4>
+        <ul>
+            <li>页面顶部显示上传文件格式提示信息</li>
+            <li>显示项目基本信息（项目编号、项目名称、项目类型、开始/结束时间、经费预算、承担单位等）</li>
+            <li>附件材料区域分为两栏显示，包含多个附件上传项</li>
+            <li>每个附件项显示格式要求，支持上传文件</li>
+            <li>底部提供保存和提交按钮</li>
+        </ul>
+    </div>
+</div>
+
+<h3>4.3.5 年度检查页面</h3>
+
+<div class="screenshot">
+    <h4>4.3.5-1 年度检查列表（基于您提供的截图设计）</h4>
+    <img src="/images/image.jpg" alt="年度检查列表" style="width: 100%; border: 2px solid #ddd; border-radius: 4px;">
+    <div class="description">
+        <h4>功能说明：</h4>
+        <ul>
+            <li>显示年度检查项目列表，表头包括项目编号、项目名称、检查状态、年度检查、年度检查时间等</li>
+            <li>根据状态显示不同操作按钮</li>
+            <li>支持筛选、搜索和导出功能</li>
+        </ul>
+    </div>
+</div>
+
+<h2>4.4 监测监管端界面原型</h2>
+
+<h3>4.4.1 监管端首页</h3>
+
+<div class="screenshot">
+    <h4>4.4.1-1 监管端工作台</h4>
+    <div style="padding: 20px; background: #f0f2f5; border: 2px solid #d9d9d9; border-radius: 8px; min-height: 600px;">
+        <!-- 顶部导航栏 -->
+        <div style="padding: 15px 20px; background: white; margin-bottom: 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button style="padding: 8px 12px; background: #f5f5f5; border: 1px solid #d9d9d9; border-radius: 4px; cursor: pointer;">☰</button>
+                <h3 style="margin: 0; color: #333;">监测监管端</h3>
+            </div>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <span style="color: #666;">欢迎您，管理员</span>
+                <button style="padding: 8px 16px; background: #f5f5f5; border: 1px solid #d9d9d9; border-radius: 4px; cursor: pointer;">退出登录</button>
+            </div>
+        </div>
+        
+        <!-- 主内容区 -->
+        <div style="display: flex; gap: 20px;">
+            <!-- 左侧折叠菜单 -->
+            <div style="width: 250px; background: white; border-radius: 8px; padding: 20px;">
+                <div style="margin-bottom: 15px;">
+                    <div style="padding: 10px; background: #667eea; color: white; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                        🏠 工作台
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <div style="padding: 10px; color: #333; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
+                        <span>📝 需求管理</span>
+                        <span>▼</span>
+                    </div>
+                    <div style="padding-left: 20px; margin-top: 5px;">
+                        <div style="padding: 8px; color: #666; cursor: pointer;">需求审核</div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <div style="padding: 10px; color: #333; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
+                        <span>📊 项目管理</span>
+                        <span>▼</span>
+                    </div>
+                    <div style="padding-left: 20px; margin-top: 5px;">
+                        <div style="padding: 8px; color: #666; cursor: pointer;">申报管理</div>
+                        <div style="padding: 8px; color: #666; cursor: pointer;">立项评审</div>
+                        <div style="padding: 8px; color: #666; cursor: pointer;">任务书管理</div>
+                        <div style="padding: 8px; color: #666; cursor: pointer;">变更管理</div>
+                        <div style="padding: 8px; color: #666; cursor: pointer;">中期检查</div>
+                        <div style="padding: 8px; color: #666; cursor: pointer;">年度检查</div>
+                        <div style="padding: 8px; color: #666; cursor: pointer;">结题验收</div>
+                        <div style="padding: 8px; color: #666; cursor: pointer;">项目库管理</div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <div style="padding: 10px; color: #333; cursor: pointer; font-weight: bold;">
+                        🏆 成果管理
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <div style="padding: 10px; color: #333; cursor: pointer; font-weight: bold;">
+                        ⚙️ 配置管理
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧内容 -->
+            <div style="flex: 1;">
+                <!-- 统计卡片 -->
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 20px;">
+                    <div style="padding: 25px; background: white; border-radius: 8px; text-align: center; border-top: 4px solid #667eea;">
+                        <div style="font-size: 28px; font-weight: bold; color: #333; margin-bottom: 10px;">156</div>
+                        <div style="color: #999; font-size: 14px;">在研项目</div>
+                    </div>
+                    <div style="padding: 25px; background: white; border-radius: 8px; text-align: center; border-top: 4px solid #52c41a;">
+                        <div style="font-size: 28px; font-weight: bold; color: #333; margin-bottom: 10px;">342</div>
+                        <div style="color: #999; font-size: 14px;">已完成项目</div>
+                    </div>
+                    <div style="padding: 25px; background: white; border-radius: 8px; text-align: center; border-top: 4px solid #faad14;">
+                        <div style="font-size: 28px; font-weight: bold; color: #333; margin-bottom: 10px;">23</div>
+                        <div style="color: #999; font-size: 14px;">待审核事项</div>
+                    </div>
+                    <div style="padding: 25px; background: white; border-radius: 8px; text-align: center; border-top: 4px solid #f5222d;">
+                        <div style="font-size: 28px; font-weight: bold; color: #333; margin-bottom: 10px;">8</div>
+                        <div style="color: #999; font-size: 14px;">预警项目</div>
+                    </div>
+                </div>
+                
+                <!-- 待办事项 -->
+                <div style="padding: 25px; background: white; border-radius: 8px; margin-bottom: 20px;">
+                    <h3 style="margin: 0 0 20px 0; color: #333;">待办事项</h3>
+                    <div style="padding: 15px; background: #f9f9f9; border-left: 4px solid #667eea; margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: bold; color: #333; margin-bottom: 5px;">需求审核</div>
+                                <div style="font-size: 12px; color: #999;">待审核需求：5条</div>
+                            </div>
+                            <button style="padding: 6px 16px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">去处理</button>
+                        </div>
+                    </div>
+                    <div style="padding: 15px; background: #f9f9f9; border-left: 4px solid #52c41a; margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: bold; color: #333; margin-bottom: 5px;">立项评审</div>
+                                <div style="font-size: 12px; color: #999;">待分配专家：8个项目</div>
+                            </div>
+                            <button style="padding: 6px 16px; background: #52c41a; color: white; border: none; border-radius: 4px; cursor: pointer;">去处理</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 项目进度概览 -->
+                <div style="padding: 25px; background: white; border-radius: 8px;">
+                    <h3 style="margin: 0 0 20px 0; color: #333;">项目进度概览</h3>
+                    <div style="height: 200px; background: #f5f5f5; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #999;">
+                        [项目进度统计图表]
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="description">
+        <h4>功能说明：</h4>
+        <ul>
+            <li>左侧折叠式菜单，支持展开/收起二级菜单</li>
+            <li>顶部提供菜单切换按钮，支持抽屉式显示/隐藏菜单</li>
+            <li>统计卡片展示关键数据：在研项目、已完成项目、待审核事项、预警项目</li>
+            <li>待办事项列表显示需要处理的任务</li>
+            <li>项目进度概览以图表形式展示</li>
+        </ul>
+    </div>
+</div>
+
+<h3>4.4.2 需求管理页面</h3>
+
+<div class="screenshot">
+    <h4>4.4.2-1 需求管理列表（基于您提供的截图设计）</h4>
+    <img src="/images/image.jpg" alt="需求管理列表" style="width: 100%; border: 2px solid #ddd; border-radius: 4px;">
+    <div class="description">
+        <h4>功能说明：</h4>
+        <ul>
+            <li>顶部显示统计卡片：需求总数、征集中、已匹配、揭榜总数</li>
+            <li>筛选条件包括需求名称、所属领域、预期水平、审核状态</li>
+            <li>列表显示需求信息，包括序号、需求名称、所属领域、申报单位、预期水平、攻关类型、提报时间、审核状态、操作</li>
+            <li>操作列根据状态显示查看或审核按钮</li>
+        </ul>
+    </div>
+</div>
+
+<div class="screenshot">
+    <h4>4.4.2-2 需求审核页面（基于您提供的截图设计）</h4>
+    <img src="/images/image.jpg" alt="需求审核页面" style="width: 100%; border: 2px solid #ddd; border-radius: 4px;">
+    <div class="description">
+        <h4>功能说明：</h4>
+        <ul>
+            <li>显示需求提出单位信息：单位名称、联系人、联系电话、身份证号、所在省市</li>
+            <li>显示需求项体信息：需求名称、所属领域、预期水平、攻关类型、技术成熟度等级、预期研发投入、建议项目类型、攻关时限</li>
+            <li>提供5个详细描述问题的文本框供审核人查看</li>
+            <li>底部提供取消、审核不通过、审核通过三个按钮</li>
+        </ul>
+    </div>
+</div>
+
+<h3>4.4.3 申报管理页面</h3>
+
+<div class="screenshot">
+    <h4>4.4.3-1 申报管理列表（基于您提供的截图设计）</h4>
+    <img src="/images/image.jpg" alt="申报管理列表" style="width: 100%; border: 2px solid #ddd; border-radius: 4px;">
+    <div class="description">
+        <h4>功能说明：</h4>
+        <ul>
+            <li>显示项目申报列表，包括项目类型、项目编号、项目名称、申报单位、负责人、查重率等字段</li>
+            <li>点击查重率弹出查重报告详情</li>
+            <li>支持筛选、搜索和导出功能</li>
+        </ul>
+    </div>
+</div>
+
+<div class="screenshot">
+    <h4>4.4.3-2 查重报告弹窗（基于您提供的截图优化设计）</h4>
+    <img src="/images/image.jpg" alt="查重报告弹窗" style="width: 100%; border: 2px solid #ddd; border-radius: 4px;">
+    <div class="description">
+        <h4>功能说明：</h4>
+        <ul>
+            <li>弹窗宽度增大到1600px，确保内容横向显示友好</li>
+            <li>左侧显示总体相似度和相似片段列表</li>
+            <li>右侧显示文档对比视图</li>
+            <li>支持查看相似片段的来源</li>
+        </ul>
+    </div>
+</div>
+
+<h3>4.4.4 任务书管理页面</h3>
+
+<div class="screenshot">
+    <h4>4.4.4-1 任务书管理列表（基于您提供的截图设计）</h4>
+    <img src="/images/image.jpg" alt="任务书管理列表" style="width: 100%; border: 2px solid #ddd; border-radius: 4px;">
+    <div class="description">
+        <h4>功能说明：</h4>
+        <ul>
+            <li>顶部显示统计卡片：待签订、已签订、执行中、已完成</li>
+            <li>列表显示任务书信息，包括复选框、项目编号、项目名称、项目类型、任务书状态、项目经费预算、项目开始/结束时间、项目经理、项目承担单位、评审通过时间、提交时间、操作</li>
+            <li>操作列根据状态显示不同按钮：已签订显示"详情"，未签订显示"任务书审核"</li>
+        </ul>
+    </div>
+</div>
+
+<div class="screenshot">
+    <h4>4.4.4-2 任务书审核/详情页面（基于您提供的截图设计）</h4>
+    <img src="/images/image.jpg" alt="任务书审核页面" style="width: 100%; border: 2px solid #ddd; border-radius: 4px;">
+    <div class="description">
+        <h4>功能说明：</h4>
+        <ul>
+            <li>显示项目基本信息：项目编号、项目名称、项目类型、开始/结束时间、经费预算、承担单位、研究内容等</li>
+            <li>显示已签订的项目任务书文档链接</li>
+            <li>显示实施进度计划表格，包括任务名称、任务编号、任务类型、任务名称、任务描述、负责机构/单位、负责人、任务开始时间等</li>
+            <li>显示中期检查配置：是否中期检查、中期检查时间、是否年度检查、年度检查时间</li>
+            <li>审核页面中，中期检查配置部分可编辑</li>
+            <li>详情页面中，所有字段均为只读</li>
+            <li>底部提供返回和通过按钮（审核页面）</li>
+        </ul>
+    </div>
+</div>
+
+<h3>4.4.5 流程配置页面</h3>
+
+<div class="screenshot">
+    <h4>4.4.5-1 流程配置列表</h4>
+    <div style="padding: 20px; background: #f0f2f5; border: 2px solid #d9d9d9; border-radius: 8px; min-height: 500px;">
+        <div style="padding: 25px; background: white; border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0; color: #333;">流程配置管理</h3>
+                <button style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">+ 新建流程</button>
+            </div>
+            
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f5f5f5;">
+                        <th style="padding: 12px; border: 1px solid #d9d9d9;">流程编号</th>
+                        <th style="padding: 12px; border: 1px solid #d9d9d9;">流程名称</th>
+                        <th style="padding: 12px; border: 1px solid #d9d9d9;">业务类型</th>
+                        <th style="padding: 12px; border: 1px solid #d9d9d9;">节点数量</th>
+                        <th style="padding: 12px; border: 1px solid #d9d9d9;">状态</th>
+                        <th style="padding: 12px; border: 1px solid #d9d9d9;">创建时间</th>
+                        <th style="padding: 12px; border: 1px solid #d9d9d9;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">WF001</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">项目立项审批流程</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">立项评审</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">5</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;"><span style="padding: 4px 8px; background: #52c41a; color: white; border-radius: 4px; font-size: 12px;">已启用</span></td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">2024-01-01</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">
+                            <a href="#" style="color: #667eea; margin-right: 10px;">设计</a>
+                            <a href="#" style="color: #667eea; margin-right: 10px;">测试</a>
+                            <a href="#" style="color: #f5222d;">删除</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">WF002</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">任务书审核流程</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">任务书管理</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">3</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;"><span style="padding: 4px 8px; background: #52c41a; color: white; border-radius: 4px; font-size: 12px;">已启用</span></td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">2024-01-05</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">
+                            <a href="#" style="color: #667eea; margin-right: 10px;">设计</a>
+                            <a href="#" style="color: #667eea; margin-right: 10px;">测试</a>
+                            <a href="#" style="color: #f5222d;">删除</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="description">
+        <h4>功能说明：</h4>
+        <ul>
+            <li>显示所有已配置的流程列表</li>
+            <li>支持新建流程</li>
+            <li>点击"设计"进入可视化流程设计器</li>
+            <li>支持测试流程功能</li>
+        </ul>
+    </div>
+</div>
+
+<div class="screenshot">
+    <h4>4.4.5-2 可视化流程设计器</h4>
+    <div style="padding: 20px; background: #f0f2f5; border: 2px solid #d9d9d9; border-radius: 8px; min-height: 700px;">
+        <div style="display: flex; gap: 20px; height: 650px;">
+            <!-- 左侧工具栏 -->
+            <div style="width: 200px; background: white; border-radius: 8px; padding: 20px;">
+                <h4 style="margin: 0 0 15px 0; color: #333;">节点工具</h4>
+                <div style="padding: 12px; background: #e3f2fd; border-radius: 4px; margin-bottom: 10px; cursor: pointer; text-align: center;">
+                    <div style="font-size: 24px; margin-bottom: 5px;">⭕</div>
+                    <div style="font-size: 12px;">开始节点</div>
+                </div>
+                <div style="padding: 12px; background: #f3e5f5; border-radius: 4px; margin-bottom: 10px; cursor: pointer; text-align: center;">
+                    <div style="font-size: 24px; margin-bottom: 5px;">📝</div>
+                    <div style="font-size: 12px;">审批节点</div>
+                </div>
+                <div style="padding: 12px; background: #e8f5e9; border-radius: 4px; margin-bottom: 10px; cursor: pointer; text-align: center;">
+                    <div style="font-size: 24px; margin-bottom: 5px;">◇</div>
+                    <div style="font-size: 12px;">条件节点</div>
+                </div>
+                <div style="padding: 12px; background: #fff3e0; border-radius: 4px; margin-bottom: 10px; cursor: pointer; text-align: center;">
+                    <div style="font-size: 24px; margin-bottom: 5px;">⏸</div>
+                    <div style="font-size: 12px;">结束节点</div>
+                </div>
+            </div>
+            
+            <!-- 中间画布 -->
+            <div style="flex: 1; background: white; border-radius: 8px; padding: 20px; position: relative; overflow: auto;">
+                <div style="text-align: center; padding: 40px 0;">
+                    <div style="display: inline-block; padding: 20px 40px; background: #e3f2fd; border-radius: 50px; margin-bottom: 30px;">
+                        <strong>开始</strong>
+                    </div>
+                    <div style="height: 40px; width: 2px; background: #d9d9d9; margin: 0 auto;"></div>
+                    <div style="display: inline-block; padding: 20px 40px; background: #f3e5f5; border-radius: 8px; margin-bottom: 30px;">
+                        <strong>形式审查</strong><br>
+                        <small style="color: #999;">审核角色：监管管理员</small>
+                    </div>
+                    <div style="height: 40px; width: 2px; background: #d9d9d9; margin: 0 auto;"></div>
+                    <div style="display: inline-block; padding: 20px 40px; background: #f3e5f5; border-radius: 8px; margin-bottom: 30px;">
+                        <strong>专家评审</strong><br>
+                        <small style="color: #999;">审核角色：评审专家</small>
+                    </div>
+                    <div style="height: 40px; width: 2px; background: #d9d9d9; margin: 0 auto;"></div>
+                    <div style="display: inline-block; padding: 20px 40px; background: #f3e5f5; border-radius: 8px; margin-bottom: 30px;">
+                        <strong>立项审批</strong><br>
+                        <small style="color: #999;">审核角色：监管管理员</small>
+                    </div>
+                    <div style="height: 40px; width: 2px; background: #d9d9d9; margin: 0 auto;"></div>
+                    <div style="display: inline-block; padding: 20px 40px; background: #fff3e0; border-radius: 50px;">
+                        <strong>结束</strong>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧属性面板 -->
+            <div style="width: 300px; background: white; border-radius: 8px; padding: 20px;">
+                <h4 style="margin: 0 0 15px 0; color: #333;">节点属性</h4>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666; font-size: 14px;">节点名称</label>
+                    <input type="text" value="形式审查" style="width: 100%; padding: 8px; border: 1px solid #d9d9d9; border-radius: 4px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666; font-size: 14px;">节点类型</label>
+                    <select style="width: 100%; padding: 8px; border: 1px solid #d9d9d9; border-radius: 4px;">
+                        <option>审批节点</option>
+                        <option>条件节点</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666; font-size: 14px;">执行角色</label>
+                    <select style="width: 100%; padding: 8px; border: 1px solid #d9d9d9; border-radius: 4px;">
+                        <option>监管管理员</option>
+                        <option>科研机构管理员</option>
+                        <option>评审专家</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666; font-size: 14px;">可见按钮</label>
+                    <div style="padding: 10px; border: 1px solid #d9d9d9; border-radius: 4px;">
+                        <label style="display: block; margin-bottom: 5px;"><input type="checkbox" checked> 通过</label>
+                        <label style="display: block; margin-bottom: 5px;"><input type="checkbox" checked> 退回</label>
+                        <label style="display: block;"><input type="checkbox"> 转交</label>
+                    </div>
+                </div>
+                <button style="width: 100%; padding: 10px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">保存配置</button>
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px; display: flex; justify-content: space-between;">
+            <button style="padding: 10px 20px; background: #f5f5f5; border: 1px solid #d9d9d9; border-radius: 4px; cursor: pointer;">返回</button>
+            <div>
+                <button style="padding: 10px 20px; background: #52c41a; color: white; border: none; border-radius: 4px; margin-right: 10px; cursor: pointer;">测试流程</button>
+                <button style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">保存流程</button>
+            </div>
+        </div>
+    </div>
+    <div class="description">
+        <h4>功能说明：</h4>
+        <ul>
+            <li>左侧工具栏提供各类节点类型，点击添加到画布</li>
+            <li>中间画布显示流程图，节点可拖拽移动</li>
+            <li>点击节点可连接到其他节点，创建流程流转</li>
+            <li>右侧属性面板配置节点属性，包括节点名称、执行角色、可见按钮等</li>
+            <li>执行角色和可见按钮从系统真实数据中选择</li>
+            <li>支持测试流程功能，模拟流程执行</li>
+            <li>支持保存流程配置</li>
+        </ul>
+    </div>
+</div>
+
+<h3>4.4.6 权限管理页面</h3>
+
+<div class="screenshot">
+    <h4>4.4.6-1 权限管理页面</h4>
+    <div style="padding: 20px; background: #f0f2f5; border: 2px solid #d9d9d9; border-radius: 8px; min-height: 600px;">
+        <div style="padding: 25px; background: white; border-radius: 8px;">
+            <h3 style="margin: 0 0 20px 0; color: #333;">权限管理</h3>
+            
+            <div style="display: flex; gap: 20px;">
+                <!-- 左侧角色列表 -->
+                <div style="width: 250px; border: 1px solid #d9d9d9; border-radius: 4px;">
+                    <div style="padding: 15px; background: #f5f5f5; border-bottom: 1px solid #d9d9d9; font-weight: bold;">
+                        角色列表
+                    </div>
+                    <div style="padding: 10px;">
+                        <div style="padding: 10px; background: #e6f7ff; border-left: 3px solid #1890ff; margin-bottom: 10px; cursor: pointer;">
+                            超级管理员
+                        </div>
+                        <div style="padding: 10px; border-left: 3px solid transparent; margin-bottom: 10px; cursor: pointer;">
+                            监管管理员
+                        </div>
+                        <div style="padding: 10px; border-left: 3px solid transparent; margin-bottom: 10px; cursor: pointer;">
+                            科研机构管理员
+                        </div>
+                        <div style="padding: 10px; border-left: 3px solid transparent; margin-bottom: 10px; cursor: pointer;">
+                            评审专家
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 右侧权限配置 -->
+                <div style="flex: 1;">
+                    <div style="margin-bottom: 20px; padding: 15px; background: #e6f7ff; border-radius: 4px;">
+                        当前配置角色：<strong>超级管理员</strong>
+                    </div>
+                    
+                    <div style="border: 1px solid #d9d9d9; border-radius: 4px;">
+                        <div style="padding: 15px; background: #f5f5f5; border-bottom: 1px solid #d9d9d9; font-weight: bold;">
+                            页面按钮级权限配置
+                        </div>
+                        
+                        <!-- 菜单权限树 -->
+                        <div style="padding: 15px;">
+                            <div style="margin-bottom: 15px;">
+                                <label style="font-weight: bold; display: block; margin-bottom: 10px;">
+                                    <input type="checkbox" checked> 项目管理
+                                </label>
+                                <div style="padding-left: 30px;">
+                                    <label style="display: block; margin-bottom: 8px;">
+                                        <input type="checkbox" checked> 申报管理
+                                    </label>
+                                    <div style="padding-left: 30px; margin-bottom: 10px;">
+                                        <div style="padding: 10px; background: #f9f9f9; border-radius: 4px;">
+                                            <div style="font-weight: bold; margin-bottom: 8px;">页面按钮权限：</div>
+                                            <label style="display: inline-block; margin-right: 15px;"><input type="checkbox" checked> 查看</label>
+                                            <label style="display: inline-block; margin-right: 15px;"><input type="checkbox" checked> 新增</label>
+                                            <label style="display: inline-block; margin-right: 15px;"><input type="checkbox" checked> 编辑</label>
+                                            <label style="display: inline-block; margin-right: 15px;"><input type="checkbox" checked> 删除</label>
+                                            <label style="display: inline-block; margin-right: 15px;"><input type="checkbox" checked> 审核</label>
+                                            <label style="display: inline-block; margin-right: 15px;"><input type="checkbox" checked> 导出</label>
+                                        </div>
+                                    </div>
+                                    
+                                    <label style="display: block; margin-bottom: 8px;">
+                                        <input type="checkbox" checked> 立项评审
+                                    </label>
+                                    <div style="padding-left: 30px; margin-bottom: 10px;">
+                                        <div style="padding: 10px; background: #f9f9f9; border-radius: 4px;">
+                                            <div style="font-weight: bold; margin-bottom: 8px;">页面按钮权限：</div>
+                                            <label style="display: inline-block; margin-right: 15px;"><input type="checkbox" checked> 查看</label>
+                                            <label style="display: inline-block; margin-right: 15px;"><input type="checkbox" checked> 分配专家</label>
+                                            <label style="display: inline-block; margin-right: 15px;"><input type="checkbox" checked> 查看评审结果</label>
+                                            <label style="display: inline-block; margin-right: 15px;"><input type="checkbox" checked> 立项审批</label>
+                                        </div>
+                                    </div>
+                                    
+                                    <label style="display: block; margin-bottom: 8px;">
+                                        <input type="checkbox" checked> 任务书管理
+                                    </label>
+                                    <div style="padding-left: 30px; margin-bottom: 10px;">
+                                        <div style="padding: 10px; background: #f9f9f9; border-radius: 4px;">
+                                            <div style="font-weight: bold; margin-bottom: 8px;">页面按钮权限：</div>
+                                            <label style="display: inline-block; margin-right: 15px;"><input type="checkbox" checked> 查看</label>
+                                            <label style="display: inline-block; margin-right: 15px;"><input type="checkbox" checked> 审核</label>
+                                            <label style="display: inline-block; margin-right: 15px;"><input type="checkbox" checked> 导出</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px; text-align: right;">
+                        <button style="padding: 10px 20px; background: #f5f5f5; border: 1px solid #d9d9d9; border-radius: 4px; margin-right: 10px; cursor: pointer;">取消</button>
+                        <button style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">保存权限</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="description">
+        <h4>功能说明：</h4>
+        <ul>
+            <li>左侧显示系统中的所有角色</li>
+            <li>选择角色后，右侧显示该角色的权限配置</li>
+            <li>权限配置采用树形结构，展示菜单层级</li>
+            <li>每个页面可配置具体的按钮权限，如查看、新增、编辑、删除、审核、导出等</li>
+            <li>支持批量勾选和保存</li>
+            <li>实现页面按钮级的细粒度权限控制</li>
+        </ul>
+    </div>
+</div>
+
+<h2>4.5 专家端界面原型</h2>
+
+<h3>4.5.1 专家端首页</h3>
+
+<div class="screenshot">
+    <h4>4.5.1-1 专家工作台</h4>
+    <div style="padding: 20px; background: #f0f2f5; border: 2px solid #d9d9d9; border-radius: 8px; min-height: 500px;">
+        <div style="padding: 25px; background: white; border-radius: 8px;">
+            <h3 style="margin: 0 0 20px 0; color: #333;">待评审任务</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px;">
+                <div style="padding: 25px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 32px; font-weight: bold; margin-bottom: 10px;">5</div>
+                    <div style="font-size: 14px;">待评审项目</div>
+                </div>
+                <div style="padding: 25px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 32px; font-weight: bold; margin-bottom: 10px;">12</div>
+                    <div style="font-size: 14px;">已完成评审</div>
+                </div>
+                <div style="padding: 25px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 32px; font-weight: bold; margin-bottom: 10px;">2</div>
+                    <div style="font-size: 14px;">逾期未评</div>
+                </div>
+            </div>
+            
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f5f5f5;">
+                        <th style="padding: 12px; border: 1px solid #d9d9d9;">项目编号</th>
+                        <th style="padding: 12px; border: 1px solid #d9d9d9;">项目名称</th>
+                        <th style="padding: 12px; border: 1px solid #d9d9d9;">评审类型</th>
+                        <th style="padding: 12px; border: 1px solid #d9d9d9;">申报单位</th>
+                        <th style="padding: 12px; border: 1px solid #d9d9d9;">截止时间</th>
+                        <th style="padding: 12px; border: 1px solid #d9d9d9;">状态</th>
+                        <th style="padding: 12px; border: 1px solid #d9d9d9;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">2024KY01</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">****项目数据融合技术研究</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">立项评审</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">****研究院</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">2024-12-31</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;"><span style="padding: 4px 8px; background: #faad14; color: white; border-radius: 4px; font-size: 12px;">待评审</span></td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;"><a href="#" style="color: #667eea; text-decoration: none;">开始评审</a></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">2024KY02</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">****试点关键技术研究</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">中期检查</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">****研究院</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;">2024-12-25</td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;"><span style="padding: 4px 8px; background: #faad14; color: white; border-radius: 4px; font-size: 12px;">待评审</span></td>
+                        <td style="padding: 12px; border: 1px solid #d9d9d9;"><a href="#" style="color: #667eea; text-decoration: none;">开始评审</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="description">
+        <h4>功能说明：</h4>
+        <ul>
+            <li>显示待评审任务统计：待评审项目、已完成评审、逾期未评</li>
+            <li>显示待评审任务列表，包括项目信息、评审类型、截止时间等</li>
+            <li>点击"开始评审"进入评审页面</li>
+        </ul>
+    </div>
+</div>
+
+<h3>4.5.2 项目评审页面</h3>
+
+<div class="screenshot">
+    <h4>4.5.2-1 立项评审页面</h4>
+    <div style="padding: 20px; background: #f0f2f5; border: 2px solid #d9d9d9; border-radius: 8px; min-height: 600px;">
+        <div style="padding: 25px; background: white; border-radius: 8px;">
+            <h3 style="margin: 0 0 20px 0; color: #333;">立项评审</h3>
+            
+            <!-- 项目信息 -->
+            <div style="padding: 20px; background: #f9f9f9; border-radius: 4px; margin-bottom: 20px;">
+                <h4 style="margin: 0 0 15px 0; color: #333;">项目基本信息</h4>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                    <div><strong>项目编号：</strong>2024KY01</div>
+                    <div><strong>项目名称：</strong>****项目数据融合技术研究</div>
+                    <div><strong>申报单位：</strong>****研究院</div>
+                    <div><strong>项目负责人：</strong>张三</div>
+                    <div><strong>项目类型：</strong>重大项目</div>
+                    <div><strong>申请经费：</strong>100万元</div>
+                </div>
+            </div>
+            
+            <!-- 申报材料 -->
+            <div style="margin-bottom: 20px;">
+                <h4 style="margin: 0 0 15px 0; color: #333;">申报材料</h4>
+                <div style="padding: 15px; border: 1px solid #d9d9d9; border-radius: 4px;">
+                    <div style="margin-bottom: 10px;">
+                        <a href="#" style="color: #667eea; text-decoration: none;">📄 项目申报书.pdf</a>
+                        <span style="margin-left: 10px; color: #999; font-size: 12px;">2.5MB</span>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <a href="#" style="color: #667eea; text-decoration: none;">📄 可行性研究报告.pdf</a>
+                        <span style="margin-left: 10px; color: #999; font-size: 12px;">1.8MB</span>
+                    </div>
+                    <div>
+                        <a href="#" style="color: #667eea; text-decoration: none;">📄 单位资质证明.pdf</a>
+                        <span style="margin-left: 10px; color: #999; font-size: 12px;">0.5MB</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 评审表单 -->
+            <div style="margin-bottom: 20px;">
+                <h4 style="margin: 0 0 15px 0; color: #333;">评审意见</h4>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666;">1. 项目研究内容是否明确、合理？</label>
+                    <div>
+                        <label style="margin-right: 20px;"><input type="radio" name="q1" value="5"> 非常合理（5分）</label>
+                        <label style="margin-right: 20px;"><input type="radio" name="q1" value="4"> 比较合理（4分）</label>
+                        <label style="margin-right: 20px;"><input type="radio" name="q1" value="3"> 一般（3分）</label>
+                        <label style="margin-right: 20px;"><input type="radio" name="q1" value="2"> 不太合理（2分）</label>
+                        <label><input type="radio" name="q1" value="1"> 不合理（1分）</label>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666;">2. 技术路线是否可行？</label>
+                    <div>
+                        <label style="margin-right: 20px;"><input type="radio" name="q2" value="5"> 非常可行（5分）</label>
+                        <label style="margin-right: 20px;"><input type="radio" name="q2" value="4"> 比较可行（4分）</label>
+                        <label style="margin-right: 20px;"><input type="radio" name="q2" value="3"> 一般（3分）</label>
+                        <label style="margin-right: 20px;"><input type="radio" name="q2" value="2"> 不太可行（2分）</label>
+                        <label><input type="radio" name="q2" value="1"> 不可行（1分）</label>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666;">3. 预期成果是否合理？</label>
+                    <div>
+                        <label style="margin-right: 20px;"><input type="radio" name="q3" value="5"> 非常合理（5分）</label>
+                        <label style="margin-right: 20px;"><input type="radio" name="q3" value="4"> 比较合理（4分）</label>
+                        <label style="margin-right: 20px;"><input type="radio" name="q3" value="3"> 一般（3分）</label>
+                        <label style="margin-right: 20px;"><input type="radio" name="q3" value="2"> 不太合理（2分）</label>
+                        <label><input type="radio" name="q3" value="1"> 不合理（1分）</label>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666;">综合评分（0-100分）：</label>
+                    <input type="number" min="0" max="100" style="width: 200px; padding: 8px; border: 1px solid #d9d9d9; border-radius: 4px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666;">评审意见：</label>
+                    <textarea rows="6" placeholder="请填写详细的评审意见..." style="width: 100%; padding: 10px; border: 1px solid #d9d9d9; border-radius: 4px; resize: vertical;"></textarea>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #666;">评审结论：</label>
+                    <div>
+                        <label style="margin-right: 20px;"><input type="radio" name="conclusion" value="pass"> 建议立项</label>
+                        <label style="margin-right: 20px;"><input type="radio" name="conclusion" value="revise"> 修改后立项</label>
+                        <label><input type="radio" name="conclusion" value="reject"> 不建议立项</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: right;">
+                <button style="padding: 10px 20px; background: #f5f5f5; border: 1px solid #d9d9d9; border-radius: 4px; margin-right: 10px; cursor: pointer;">保存草稿</button>
+                <button style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">提交评审</button>
+            </div>
+        </div>
+    </div>
+    <div class="description">
+        <h4>功能说明：</h4>
+        <ul>
+            <li>显示项目基本信息</li>
+            <li>提供申报材料下载链接</li>
+            <li>评审表单包括多个评分项和综合评分</li>
+            <li>填写详细的评审意见</li>
+            <li>选择评审结论：建议立项、修改后立项、不建议立项</li>
+            <li>支持保存草稿和提交评审</li>
+        </ul>
+    </div>
+</div>
+
+<!-- 第五章：数据库设计 -->
+<h1 id="chapter5">第五章 数据库设计</h1>
+
+<h2>5.1 数据库设计原则</h2>
+
+<p>数据库设计遵循以下原则：</p>
+<ul>
+    <li><strong>规范化设计：</strong>遵循第三范式（3NF），减少数据冗余，提高数据一致性。</li>
+    <li><strong>性能优化：</strong>合理设计索引，优化查询性能。对于频繁查询的字段建立索引。</li>
+    <li><strong>安全性：</strong>敏感字段加密存储，如密码、身份证号等。</li>
+    <li><strong>可扩展性：</strong>预留扩展字段，便于后续功能扩展。</li>
+    <li><strong>数据完整性：</strong>使用外键约束、唯一约束、非空约束等保证数据完整性。</li>
+</ul>
+
+<h2>5.2 数据库表设计</h2>
+
+<p>系统共设计32张数据库表，分为以下几类：</p>
+<ul>
+    <li><strong>用户权限类（6张表）：</strong>用户表、角色表、权限表、用户角色关联表、角色权限关联表、机构表</li>
+    <li><strong>需求管理类（1张表）：</strong>需求表</li>
+    <li><strong>项目管理类（15张表）：</strong>项目表、项目申报表、项目评审表、专家评审表、任务书表、任务表、项目变更表、中期检查表、年度检查表、验收表、项目成员表、项目附件表等</li>
+    <li><strong>成果管理类（2张表）：</strong>成果表、成果附件表</li>
+    <li><strong>专家管理类（2张表）：</strong>专家表、专家领域表</li>
+    <li><strong>流程引擎类（4张表）：</strong>流程定义表、流程节点表、流程实例表、流程日志表</li>
+    <li><strong>系统管理类（2张表）：</strong>字典表、操作日志表</li>
+</ul>
+
+<h3>5.2.1 用户权限类表设计</h3>
+
+<h4>5.2.1.1 用户表（sys_user）</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>字段名</th>
+            <th>类型</th>
+            <th>长度</th>
+            <th>允许空</th>
+            <th>主键</th>
+            <th>说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>否</td>
+            <td>是</td>
+            <td>用户ID</td>
+        </tr>
+        <tr>
+            <td>username</td>
+            <td>VARCHAR</td>
+            <td>50</td>
+            <td>否</td>
+            <td>否</td>
+            <td>用户名（唯一）</td>
+        </tr>
+        <tr>
+            <td>password</td>
+            <td>VARCHAR</td>
+            <td>200</td>
+            <td>否</td>
+            <td>否</td>
+            <td>密码（BCrypt加密）</td>
+        </tr>
+        <tr>
+            <td>real_name</td>
+            <td>VARCHAR</td>
+            <td>50</td>
+            <td>否</td>
+            <td>否</td>
+            <td>真实姓名</td>
+        </tr>
+        <tr>
+            <td>phone</td>
+            <td>VARCHAR</td>
+            <td>20</td>
+            <td>是</td>
+            <td>否</td>
+            <td>联系电话</td>
+        </tr>
+        <tr>
+            <td>email</td>
+            <td>VARCHAR</td>
+            <td>100</td>
+            <td>是</td>
+            <td>否</td>
+            <td>邮箱</td>
+        </tr>
+        <tr>
+            <td>id_card</td>
+            <td>VARCHAR</td>
+            <td>200</td>
+            <td>是</td>
+            <td>否</td>
+            <td>身份证号（加密存储）</td>
+        </tr>
+        <tr>
+            <td>org_id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>所属机构ID</td>
+        </tr>
+        <tr>
+            <td>user_type</td>
+            <td>VARCHAR</td>
+            <td>20</td>
+            <td>否</td>
+            <td>否</td>
+            <td>用户类型（admin/supervisor/researcher/expert）</td>
+        </tr>
+        <tr>
+            <td>status</td>
+            <td>INT</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>状态（0-禁用，1-启用）</td>
+        </tr>
+        <tr>
+            <td>create_time</td>
+            <td>TIMESTAMP</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>创建时间</td>
+        </tr>
+        <tr>
+            <td>update_time</td>
+            <td>TIMESTAMP</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>更新时间</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="note note-info">
+    <div class="note-title">索引设计：</div>
+    <ul>
+        <li>PRIMARY KEY (id)</li>
+        <li>UNIQUE INDEX idx_username (username)</li>
+        <li>INDEX idx_org_id (org_id)</li>
+        <li>INDEX idx_user_type (user_type)</li>
+    </ul>
+</div>
+
+<h4>5.2.1.2 角色表（sys_role）</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>字段名</th>
+            <th>类型</th>
+            <th>长度</th>
+            <th>允许空</th>
+            <th>主键</th>
+            <th>说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>否</td>
+            <td>是</td>
+            <td>角色ID</td>
+        </tr>
+        <tr>
+            <td>role_name</td>
+            <td>VARCHAR</td>
+            <td>50</td>
+            <td>否</td>
+            <td>否</td>
+            <td>角色名称</td>
+        </tr>
+        <tr>
+            <td>role_code</td>
+            <td>VARCHAR</td>
+            <td>50</td>
+            <td>否</td>
+            <td>否</td>
+            <td>角色编码（唯一）</td>
+        </tr>
+        <tr>
+            <td>description</td>
+            <td>VARCHAR</td>
+            <td>200</td>
+            <td>是</td>
+            <td>否</td>
+            <td>角色描述</td>
+        </tr>
+        <tr>
+            <td>status</td>
+            <td>INT</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>状态（0-禁用，1-启用）</td>
+        </tr>
+        <tr>
+            <td>create_time</td>
+            <td>TIMESTAMP</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>创建时间</td>
+        </tr>
+        <tr>
+            <td>update_time</td>
+            <td>TIMESTAMP</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>更新时间</td>
+        </tr>
+    </tbody>
+</table>
+
+<h4>5.2.1.3 权限表（sys_permission）</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>字段名</th>
+            <th>类型</th>
+            <th>长度</th>
+            <th>允许空</th>
+            <th>主键</th>
+            <th>说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>否</td>
+            <td>是</td>
+            <td>权限ID</td>
+        </tr>
+        <tr>
+            <td>parent_id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>父权限ID（0表示顶级）</td>
+        </tr>
+        <tr>
+            <td>permission_name</td>
+            <td>VARCHAR</td>
+            <td>50</td>
+            <td>否</td>
+            <td>否</td>
+            <td>权限名称</td>
+        </tr>
+        <tr>
+            <td>permission_code</td>
+            <td>VARCHAR</td>
+            <td>100</td>
+            <td>否</td>
+            <td>否</td>
+            <td>权限编码（唯一）</td>
+        </tr>
+        <tr>
+            <td>permission_type</td>
+            <td>VARCHAR</td>
+            <td>20</td>
+            <td>否</td>
+            <td>否</td>
+            <td>权限类型（menu/page/button）</td>
+        </tr>
+        <tr>
+            <td>path</td>
+            <td>VARCHAR</td>
+            <td>200</td>
+            <td>是</td>
+            <td>否</td>
+            <td>路由路径</td>
+        </tr>
+        <tr>
+            <td>icon</td>
+            <td>VARCHAR</td>
+            <td>50</td>
+            <td>是</td>
+            <td>否</td>
+            <td>图标</td>
+        </tr>
+        <tr>
+            <td>sort_order</td>
+            <td>INT</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>排序</td>
+        </tr>
+        <tr>
+            <td>status</td>
+            <td>INT</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>状态（0-禁用，1-启用）</td>
+        </tr>
+        <tr>
+            <td>create_time</td>
+            <td>TIMESTAMP</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>创建时间</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>5.2.2 项目管理类表设计</h3>
+
+<h4>5.2.2.1 项目表（project）</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>字段名</th>
+            <th>类型</th>
+            <th>长度</th>
+            <th>允许空</th>
+            <th>主键</th>
+            <th>说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>否</td>
+            <td>是</td>
+            <td>项目ID</td>
+        </tr>
+        <tr>
+            <td>project_no</td>
+            <td>VARCHAR</td>
+            <td>50</td>
+            <td>否</td>
+            <td>否</td>
+            <td>项目编号（唯一）</td>
+        </tr>
+        <tr>
+            <td>project_name</td>
+            <td>VARCHAR</td>
+            <td>200</td>
+            <td>否</td>
+            <td>否</td>
+            <td>项目名称</td>
+        </tr>
+        <tr>
+            <td>project_type</td>
+            <td>VARCHAR</td>
+            <td>50</td>
+            <td>否</td>
+            <td>否</td>
+            <td>项目类型</td>
+        </tr>
+        <tr>
+            <td>start_date</td>
+            <td>DATE</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>开始时间</td>
+        </tr>
+        <tr>
+            <td>end_date</td>
+            <td>DATE</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>结束时间</td>
+        </tr>
+        <tr>
+            <td>total_budget</td>
+            <td>DECIMAL</td>
+            <td>15,2</td>
+            <td>是</td>
+            <td>否</td>
+            <td>项目总预算（万元）</td>
+        </tr>
+        <tr>
+            <td>apply_budget</td>
+            <td>DECIMAL</td>
+            <td>15,2</td>
+            <td>是</td>
+            <td>否</td>
+            <td>申请专项经费（万元）</td>
+        </tr>
+        <tr>
+            <td>self_budget</td>
+            <td>DECIMAL</td>
+            <td>15,2</td>
+            <td>是</td>
+            <td>否</td>
+            <td>自筹/其他经费（万元）</td>
+        </tr>
+        <tr>
+            <td>lead_org_id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>牵头单位ID</td>
+        </tr>
+        <tr>
+            <td>leader_id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>项目负责人ID</td>
+        </tr>
+        <tr>
+            <td>research_content</td>
+            <td>TEXT</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>主要研究内容</td>
+        </tr>
+        <tr>
+            <td>project_status</td>
+            <td>VARCHAR</td>
+            <td>20</td>
+            <td>否</td>
+            <td>否</td>
+            <td>项目状态（applying/reviewing/approved/executing/completed/terminated）</td>
+        </tr>
+        <tr>
+            <td>task_status</td>
+            <td>VARCHAR</td>
+            <td>20</td>
+            <td>是</td>
+            <td>否</td>
+            <td>任务书状态（pending/signed）</td>
+        </tr>
+        <tr>
+            <td>has_midterm</td>
+            <td>INT</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>是否中期检查（0-否，1-是）</td>
+        </tr>
+        <tr>
+            <td>midterm_date</td>
+            <td>DATE</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>中期检查时间</td>
+        </tr>
+        <tr>
+            <td>has_annual</td>
+            <td>INT</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>是否年度检查（0-否，1-是）</td>
+        </tr>
+        <tr>
+            <td>annual_date</td>
+            <td>DATE</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>年度检查时间</td>
+        </tr>
+        <tr>
+            <td>create_time</td>
+            <td>TIMESTAMP</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>创建时间</td>
+        </tr>
+        <tr>
+            <td>update_time</td>
+            <td>TIMESTAMP</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>更新时间</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="note note-info">
+    <div class="note-title">索引设计：</div>
+    <ul>
+        <li>PRIMARY KEY (id)</li>
+        <li>UNIQUE INDEX idx_project_no (project_no)</li>
+        <li>INDEX idx_project_status (project_status)</li>
+        <li>INDEX idx_lead_org_id (lead_org_id)</li>
+        <li>INDEX idx_leader_id (leader_id)</li>
+    </ul>
+</div>
+
+<h4>5.2.2.2 任务书表（project_task_book）</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>字段名</th>
+            <th>类型</th>
+            <th>长度</th>
+            <th>允许空</th>
+            <th>主键</th>
+            <th>说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>否</td>
+            <td>是</td>
+            <td>任务书ID</td>
+        </tr>
+        <tr>
+            <td>project_id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>项目ID</td>
+        </tr>
+        <tr>
+            <td>task_book_no</td>
+            <td>VARCHAR</td>
+            <td>50</td>
+            <td>是</td>
+            <td>否</td>
+            <td>任务书编号</td>
+        </tr>
+        <tr>
+            <td>file_url</td>
+            <td>VARCHAR</td>
+            <td>500</td>
+            <td>是</td>
+            <td>否</td>
+            <td>任务书文件URL</td>
+        </tr>
+        <tr>
+            <td>status</td>
+            <td>VARCHAR</td>
+            <td>20</td>
+            <td>否</td>
+            <td>否</td>
+            <td>状态（draft/submitted/approved/rejected）</td>
+        </tr>
+        <tr>
+            <td>submit_time</td>
+            <td>TIMESTAMP</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>提交时间</td>
+        </tr>
+        <tr>
+            <td>approve_time</td>
+            <td>TIMESTAMP</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>审批时间</td>
+        </tr>
+        <tr>
+            <td>approver_id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>审批人ID</td>
+        </tr>
+        <tr>
+            <td>approve_opinion</td>
+            <td>TEXT</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>审批意见</td>
+        </tr>
+        <tr>
+            <td>create_time</td>
+            <td>TIMESTAMP</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>创建时间</td>
+        </tr>
+    </tbody>
+</table>
+
+<h4>5.2.2.3 任务表（project_task）</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>字段名</th>
+            <th>类型</th>
+            <th>长度</th>
+            <th>允许空</th>
+            <th>主键</th>
+            <th>说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>否</td>
+            <td>是</td>
+            <td>任务ID</td>
+        </tr>
+        <tr>
+            <td>project_id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>项目ID</td>
+        </tr>
+        <tr>
+            <td>task_no</td>
+            <td>VARCHAR</td>
+            <td>50</td>
+            <td>是</td>
+            <td>否</td>
+            <td>任务编号</td>
+        </tr>
+        <tr>
+            <td>task_name</td>
+            <td>VARCHAR</td>
+            <td>200</td>
+            <td>否</td>
+            <td>否</td>
+            <td>任务名称</td>
+        </tr>
+        <tr>
+            <td>task_type</td>
+            <td>VARCHAR</td>
+            <td>50</td>
+            <td>是</td>
+            <td>否</td>
+            <td>任务类型</td>
+        </tr>
+        <tr>
+            <td>task_desc</td>
+            <td>TEXT</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>任务描述</td>
+        </tr>
+        <tr>
+            <td>responsible_org_id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>负责单位ID</td>
+        </tr>
+        <tr>
+            <td>responsible_person_id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>负责人ID</td>
+        </tr>
+        <tr>
+            <td>start_date</td>
+            <td>DATE</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>开始时间</td>
+        </tr>
+        <tr>
+            <td>end_date</td>
+            <td>DATE</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>结束时间</td>
+        </tr>
+        <tr>
+            <td>create_time</td>
+            <td>TIMESTAMP</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>创建时间</td>
+        </tr>
+    </tbody>
+</table>
+
+<h4>5.2.2.4 中期检查表（project_midterm_check）</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>字段名</th>
+            <th>类型</th>
+            <th>长度</th>
+            <th>允许空</th>
+            <th>主键</th>
+            <th>说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>否</td>
+            <td>是</td>
+            <td>检查ID</td>
+        </tr>
+        <tr>
+            <td>project_id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>项目ID</td>
+        </tr>
+        <tr>
+            <td>check_status</td>
+            <td>VARCHAR</td>
+            <td>20</td>
+            <td>否</td>
+            <td>否</td>
+            <td>检查状态（not_submitted/submitted/reviewing/passed/failed）</td>
+        </tr>
+        <tr>
+            <td>submit_time</td>
+            <td>TIMESTAMP</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>提交时间</td>
+        </tr>
+        <tr>
+            <td>submitter_id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>提交人ID</td>
+        </tr>
+        <tr>
+            <td>review_time</td>
+            <td>TIMESTAMP</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>审核时间</td>
+        </tr>
+        <tr>
+            <td>reviewer_id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>审核人ID</td>
+        </tr>
+        <tr>
+            <td>review_opinion</td>
+            <td>TEXT</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>审核意见</td>
+        </tr>
+        <tr>
+            <td>create_time</td>
+            <td>TIMESTAMP</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>创建时间</td>
+        </tr>
+    </tbody>
+</table>
+
+<h4>5.2.2.5 年度检查表（project_annual_check）</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>字段名</th>
+            <th>类型</th>
+            <th>长度</th>
+            <th>允许空</th>
+            <th>主键</th>
+            <th>说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>否</td>
+            <td>是</td>
+            <td>检查ID</td>
+        </tr>
+        <tr>
+            <td>project_id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>项目ID</td>
+        </tr>
+        <tr>
+            <td>check_year</td>
+            <td>INT</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>检查年度</td>
+        </tr>
+        <tr>
+            <td>check_status</td>
+            <td>VARCHAR</td>
+            <td>20</td>
+            <td>否</td>
+            <td>否</td>
+            <td>检查状态（not_submitted/submitted/reviewing/passed/failed）</td>
+        </tr>
+        <tr>
+            <td>submit_time</td>
+            <td>TIMESTAMP</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>提交时间</td>
+        </tr>
+        <tr>
+            <td>submitter_id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>提交人ID</td>
+        </tr>
+        <tr>
+            <td>review_time</td>
+            <td>TIMESTAMP</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>审核时间</td>
+        </tr>
+        <tr>
+            <td>reviewer_id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>审核人ID</td>
+        </tr>
+        <tr>
+            <td>review_opinion</td>
+            <td>TEXT</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>审核意见</td>
+        </tr>
+        <tr>
+            <td>create_time</td>
+            <td>TIMESTAMP</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>创建时间</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>5.2.3 流程引擎类表设计</h3>
+
+<h4>5.2.3.1 流程定义表（workflow_definition）</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>字段名</th>
+            <th>类型</th>
+            <th>长度</th>
+            <th>允许空</th>
+            <th>主键</th>
+            <th>说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>否</td>
+            <td>是</td>
+            <td>流程ID</td>
+        </tr>
+        <tr>
+            <td>workflow_code</td>
+            <td>VARCHAR</td>
+            <td>50</td>
+            <td>否</td>
+            <td>否</td>
+            <td>流程编码（唯一）</td>
+        </tr>
+        <tr>
+            <td>workflow_name</td>
+            <td>VARCHAR</td>
+            <td>100</td>
+            <td>否</td>
+            <td>否</td>
+            <td>流程名称</td>
+        </tr>
+        <tr>
+            <td>business_type</td>
+            <td>VARCHAR</td>
+            <td>50</td>
+            <td>否</td>
+            <td>否</td>
+            <td>业务类型</td>
+        </tr>
+        <tr>
+            <td>workflow_json</td>
+            <td>TEXT</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>流程定义JSON</td>
+        </tr>
+        <tr>
+            <td>status</td>
+            <td>INT</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>状态（0-禁用，1-启用）</td>
+        </tr>
+        <tr>
+            <td>create_time</td>
+            <td>TIMESTAMP</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>创建时间</td>
+        </tr>
+    </tbody>
+</table>
+
+<h4>5.2.3.2 流程节点表（workflow_node）</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>字段名</th>
+            <th>类型</th>
+            <th>长度</th>
+            <th>允许空</th>
+            <th>主键</th>
+            <th>说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>否</td>
+            <td>是</td>
+            <td>节点ID</td>
+        </tr>
+        <tr>
+            <td>workflow_id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>流程ID</td>
+        </tr>
+        <tr>
+            <td>node_code</td>
+            <td>VARCHAR</td>
+            <td>50</td>
+            <td>否</td>
+            <td>否</td>
+            <td>节点编码</td>
+        </tr>
+        <tr>
+            <td>node_name</td>
+            <td>VARCHAR</td>
+            <td>100</td>
+            <td>否</td>
+            <td>否</td>
+            <td>节点名称</td>
+        </tr>
+        <tr>
+            <td>node_type</td>
+            <td>VARCHAR</td>
+            <td>20</td>
+            <td>否</td>
+            <td>否</td>
+            <td>节点类型（start/approval/condition/end）</td>
+        </tr>
+        <tr>
+            <td>role_ids</td>
+            <td>VARCHAR</td>
+            <td>200</td>
+            <td>是</td>
+            <td>否</td>
+            <td>执行角色ID列表（逗号分隔）</td>
+        </tr>
+        <tr>
+            <td>button_permissions</td>
+            <td>VARCHAR</td>
+            <td>500</td>
+            <td>是</td>
+            <td>否</td>
+            <td>按钮权限列表（JSON）</td>
+        </tr>
+        <tr>
+            <td>sort_order</td>
+            <td>INT</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>排序</td>
+        </tr>
+        <tr>
+            <td>create_time</td>
+            <td>TIMESTAMP</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>创建时间</td>
+        </tr>
+    </tbody>
+</table>
+
+<h4>5.2.3.3 流程实例表（workflow_instance）</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>字段名</th>
+            <th>类型</th>
+            <th>长度</th>
+            <th>允许空</th>
+            <th>主键</th>
+            <th>说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>否</td>
+            <td>是</td>
+            <td>实例ID</td>
+        </tr>
+        <tr>
+            <td>workflow_id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>流程ID</td>
+        </tr>
+        <tr>
+            <td>business_id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>业务ID</td>
+        </tr>
+        <tr>
+            <td>current_node_id</td>
+            <td>BIGINT</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>当前节点ID</td>
+        </tr>
+        <tr>
+            <td>instance_status</td>
+            <td>VARCHAR</td>
+            <td>20</td>
+            <td>否</td>
+            <td>否</td>
+            <td>实例状态（running/completed/terminated）</td>
+        </tr>
+        <tr>
+            <td>start_time</td>
+            <td>TIMESTAMP</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>开始时间</td>
+        </tr>
+        <tr>
+            <td>end_time</td>
+            <td>TIMESTAMP</td>
+            <td>-</td>
+            <td>是</td>
+            <td>否</td>
+            <td>结束时间</td>
+        </tr>
+        <tr>
+            <td>create_time</td>
+            <td>TIMESTAMP</td>
+            <td>-</td>
+            <td>否</td>
+            <td>否</td>
+            <td>创建时间</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>5.3 数据字典</h2>
+
+<h3>5.3.1 用户类型（user_type）</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>代码</th>
+            <th>名称</th>
+            <th>说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>admin</td>
+            <td>超级管理员</td>
+            <td>拥有所有权限</td>
+        </tr>
+        <tr>
+            <td>supervisor</td>
+            <td>监管管理员</td>
+            <td>监测监管端用户</td>
+        </tr>
+        <tr>
+            <td>researcher</td>
+            <td>科研机构用户</td>
+            <td>科研端用户</td>
+        </tr>
+        <tr>
+            <td>expert</td>
+            <td>评审专家</td>
+            <td>专家端用户</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>5.3.2 项目状态（project_status）</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>代码</th>
+            <th>名称</th>
+            <th>说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>applying</td>
+            <td>申报中</td>
+            <td>项目正在申报</td>
+        </tr>
+        <tr>
+            <td>reviewing</td>
+            <td>评审中</td>
+            <td>项目正在评审</td>
+        </tr>
+        <tr>
+            <td>approved</td>
+            <td>已立项</td>
+            <td>项目已通过立项</td>
+        </tr>
+        <tr>
+            <td>executing</td>
+            <td>执行中</td>
+            <td>项目正在执行</td>
+        </tr>
+        <tr>
+            <td>completed</td>
+            <td>已完成</td>
+            <td>项目已完成</td>
+        </tr>
+        <tr>
+            <td>terminated</td>
+            <td>已终止</td>
+            <td>项目已终止</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>5.3.3 检查状态（check_status）</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>代码</th>
+            <th>名称</th>
+            <th>说明</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>not_submitted</td>
+            <td>未提交</td>
+            <td>材料未提交</td>
+        </tr>
+        <tr>
+            <td>submitted</td>
+            <td>已提交</td>
+            <td>材料已提交，待审核</td>
+        </tr>
+        <tr>
+            <td>reviewing</td>
+            <td>审核中</td>
+            <td>正在审核</td>
+        </tr>
+        <tr>
+            <td>passed</td>
+            <td>已通过</td>
+            <td>审核通过</td>
+        </tr>
+        <tr>
+            <td>failed</td>
+            <td>未通过</td>
+            <td>审核未通过</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>5.4 数据库适配说明</h2>
+
+<h3>5.4.1 人大金仓数据库适配</h3>
+
+<p>人大金仓KingbaseES是一款国产关系型数据库，完全兼容PostgreSQL生态。系统数据库设计完全兼容人大金仓数据库，具体适配说明如下：</p>
+
+<ul>
+    <li><strong>数据类型：</strong>人大金仓支持PostgreSQL的所有数据类型，包括BIGINT、VARCHAR、TEXT、TIMESTAMP、DECIMAL等。</li>
+    <li><strong>索引：</strong>支持B-Tree、Hash、GiST、GIN等多种索引类型。</li>
+    <li><strong>约束：</strong>支持主键约束、外键约束、唯一约束、非空约束、检查约束等。</li>
+    <li><strong>函数：</strong>支持PostgreSQL的内置函数和自定义函数。</li>
+    <li><strong>事务：</strong>支持ACID事务特性，确保数据一致性。</li>
+    <li><strong>备份恢复：</strong>支持物理备份和逻辑备份，提供完善的备份恢复机制。</li>
+</ul>
+
+<h3>5.4.2 数据库连接配置</h3>
+
+<p>Spring Boot应用连接人大金仓数据库的配置示例：</p>
+
+<pre><code>spring:
+  datasource:
+    driver-class-name: com.kingbase8.Driver
+    url: jdbc:kingbase8://localhost:54321/research_db
+    username: system
+    password: ******
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000</code></pre>
+
+<div class="note note-warning">
+    <div class="note-title">注意事项：</div>
+    <ul>
+        <li>人大金仓默认端口为54321，与PostgreSQL的5432不同。</li>
+        <li>驱动类名为com.kingbase8.Driver。</li>
+        <li>JDBC URL格式为jdbc:kingbase8://。</li>
+        <li>需要在pom.xml中添加人大金仓JDBC驱动依赖。</li>
+    </ul>
+</div>
+
+<!-- 继续后续章节... -->
+
+<div class="footer">
+    <p>科研项目管理系统详细设计方案 - 第 1 页 / 共 700 页</p>
+    <p>版权所有 © 2025 | 机密文档，未经授权不得复制或传播</p>
+</div>
+
+</div>
+
+</body>
+</html>

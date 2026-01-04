@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.research.project.mapper.ProjectScheduleMapper">
+
+    <resultMap id="BaseResultMap" type="com.research.project.entity.ProjectSchedule">
+        <id column="id" property="id" />
+        <result column="project_id" property="projectId" />
+        <result column="phase_name" property="phaseName" />
+        <result column="start_date" property="startDate" />
+        <result column="end_date" property="endDate" />
+        <result column="plan_desc" property="planDesc" />
+        <result column="expected_result" property="expectedResult" />
+        <result column="responsible_person" property="responsiblePerson" />
+        <result column="actual_start_date" property="actualStartDate" />
+        <result column="actual_end_date" property="actualEndDate" />
+        <result column="completion_rate" property="completionRate" />
+        <result column="status" property="status" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+</mapper>

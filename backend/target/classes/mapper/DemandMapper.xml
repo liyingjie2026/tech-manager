@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.research.project.mapper.DemandMapper">
+    
+    <resultMap id="BaseResultMap" type="com.research.project.entity.Demand">
+        <id column="id" property="id"/>
+        <result column="demand_no" property="demandNo"/>
+        <result column="name" property="name"/>
+        <result column="type" property="type"/>
+        <result column="project_type" property="projectType"/>
+        <result column="research_field" property="researchField"/>
+        <result column="description" property="description"/>
+        <result column="objective" property="objective"/>
+        <result column="content" property="content"/>
+        <result column="expected_result" property="expectedResult"/>
+        <result column="budget" property="budget"/>
+        <result column="apply_start_date" property="applyStartDate"/>
+        <result column="apply_end_date" property="applyEndDate"/>
+        <result column="duration" property="duration"/>
+        <result column="publish_unit" property="publishUnit"/>
+        <result column="contact_person" property="contactPerson"/>
+        <result column="contact_phone" property="contactPhone"/>
+        <result column="attachments" property="attachments"/>
+        <result column="status" property="status"/>
+        <result column="audit_status" property="auditStatus"/>
+        <result column="audit_comment" property="auditComment"/>
+        <result column="audit_time" property="auditTime"/>
+        <result column="audit_by" property="auditBy"/>
+        <result column="publish_time" property="publishTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+    
+    <!-- Added selectByConditions for list() pagination -->
+    <select id="selectByConditions" resultMap="BaseResultMap">
+        SELECT * FROM res_demand
+        WHERE deleted = 0
+        <if test="keyword != null and keyword != ''">
+            AND (demand_no LIKE CONCAT('%', #{keyword}, '%') 
+                 OR name LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+        <if test="type != null and type != ''">
+            AND type = #{type}
+        </if>
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{size}
+    </select>
+    
+    <!-- Added countByConditions for pagination total -->
+    <select id="countByConditions" resultType="long">
+        SELECT COUNT(*) FROM res_demand
+        WHERE deleted = 0
+        <if test="keyword != null and keyword != ''">
+            AND (demand_no LIKE CONCAT('%', #{keyword}, '%') 
+                 OR name LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <if test="status != null and status != ''">
+            AND status = #{status}
+        </if>
+        <if test="type != null and type != ''">
+            AND type = #{type}
+        </if>
+    </select>
+    
+</mapper>

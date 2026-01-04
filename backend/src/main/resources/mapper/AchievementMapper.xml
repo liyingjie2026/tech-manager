@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.research.project.mapper.AchievementMapper">
+    
+    <resultMap id="BaseResultMap" type="com.research.project.entity.Achievement">
+        <id column="id" property="id"/>
+        <result column="achievement_no" property="achievementNo"/>
+        <result column="project_id" property="projectId"/>
+        <result column="project_name" property="projectName"/>
+        <result column="name" property="name"/>
+        <result column="type" property="type"/>
+        <result column="field" property="field"/>
+        <result column="completion_unit" property="completionUnit"/>
+        <result column="completion_person" property="completionPerson"/>
+        <result column="completion_date" property="completionDate"/>
+        <result column="description" property="description"/>
+        <result column="detail" property="detail"/>
+        <result column="keywords" property="keywords"/>
+        <result column="attachments" property="attachments"/>
+        <result column="is_public" property="isPublic"/>
+        <result column="is_promoted" property="isPromoted"/>
+        <result column="view_count" property="viewCount"/>
+        <result column="download_count" property="downloadCount"/>
+        <result column="status" property="status"/>
+        <result column="audit_comment" property="auditComment"/>
+        <result column="audit_time" property="auditTime"/>
+        <result column="audit_by" property="auditBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+    
+    <select id="selectByProjectId" resultMap="BaseResultMap">
+        SELECT * FROM prj_achievement WHERE project_id = #{projectId} AND deleted = 0
+        ORDER BY create_time DESC
+    </select>
+    
+    <!-- 添加附件 - 对应Controller: addAttachments() -->
+    <insert id="insertAttachments">
+        INSERT INTO prj_achievement_attachment (
+            achievement_id, file_id, create_time
+        ) VALUES
+        <foreach collection="fileIds" item="fileId" separator=",">
+            (#{id}, #{fileId}, NOW())
+        </foreach>
+    </insert>
+    
+    <!-- 分页查询成果转化 - 对应Controller: listTransformations() -->
+    <select id="selectTransformations" resultType="map">
+        SELECT 
+            t.id, t.achievement_id, t.transformation_type, t.transformation_date,
+            t.partner, t.income, t.status, t.description,
+            a.name as achievement_name
+        FROM prj_achievement_transformation t
+        LEFT JOIN prj_achievement a ON t.achievement_id = a.id
+        WHERE t.deleted = 0
+        ORDER BY t.create_time DESC
+    </select>
+    
+    <!-- 创建成果转化 - 对应Controller: createTransformation() -->
+    <insert id="insertTransformation">
+        INSERT INTO prj_achievement_transformation (
+            achievement_id, transformation_type, transformation_date,
+            partner, income, description, status, create_time
+        ) VALUES (
+            #{id}, #{dto.transformationType}, #{dto.transformationDate},
+            #{dto.partner}, #{dto.income}, #{dto.description}, 'draft', NOW()
+        )
+    </insert>
+    
+    <!-- 更新成果转化 - 对应Controller: updateTransformation() -->
+    <update id="updateTransformation">
+        UPDATE prj_achievement_transformation SET
+            transformation_type = #{dto.transformationType},
+            transformation_date = #{dto.transformationDate},
+            partner = #{dto.partner},
+            income = #{dto.income},
+            description = #{dto.description},
+            update_time = NOW()
+        WHERE id = #{transformationId} AND deleted = 0
+    </update>
+    
+    <!-- 更新成果转化状态 - 对应Controller: submitTransformation() -->
+    <update id="updateTransformationStatus">
+        UPDATE prj_achievement_transformation SET
+            status = #{status},
+            update_time = NOW()
+        WHERE id = #{transformationId} AND deleted = 0
+    </update>
+    
+    <!-- 审核成果转化 - 对应Controller: auditTransformation() -->
+    <update id="updateTransformationAudit">
+        UPDATE prj_achievement_transformation SET
+            status = #{status},
+            audit_opinion = #{opinion},
+            audit_time = NOW(),
+            update_time = NOW()
+        WHERE id = #{transformationId} AND deleted = 0
+    </update>
+    
+    <!-- 更新发布状态 - 对应Controller: publishAchievement(), unpublishAchievement() -->
+    <update id="updatePublishStatus">
+        UPDATE prj_achievement SET
+            is_public = #{isPublic},
+            update_time = NOW()
+        WHERE id = #{id} AND deleted = 0
+    </update>
+    
+    <!-- 分页查询已发布成果 - 对应Controller: listPublished() -->
+    <select id="selectPublishedPage" resultMap="BaseResultMap">
+        SELECT * FROM prj_achievement 
+        WHERE deleted = 0 AND is_public = 1
+        <if test="keyword != null and keyword != ''">
+            AND (name LIKE CONCAT('%', #{keyword}, '%') 
+                 OR keywords LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        ORDER BY create_time DESC
+    </select>
+    
+</mapper>

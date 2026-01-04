@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.research.project.mapper.InstitutionMapper">
+    
+    <resultMap id="BaseResultMap" type="com.research.project.entity.Institution">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="short_name" property="shortName"/>
+        <result column="type" property="type"/>
+        <result column="credit_code" property="creditCode"/>
+        <result column="legal_person" property="legalPerson"/>
+        <result column="legal_person_id_card" property="legalPersonIdCard"/>
+        <result column="legal_person_phone" property="legalPersonPhone"/>
+        <result column="contact_person" property="contactPerson"/>
+        <result column="contact_phone" property="contactPhone"/>
+        <result column="contact_email" property="contactEmail"/>
+        <result column="province" property="province"/>
+        <result column="city" property="city"/>
+        <result column="district" property="district"/>
+        <result column="address" property="address"/>
+        <result column="postcode" property="postcode"/>
+        <result column="description" property="description"/>
+        <result column="business_license" property="businessLicense"/>
+        <result column="qualification" property="qualification"/>
+        <result column="research_field" property="researchField"/>
+        <result column="audit_status" property="auditStatus"/>
+        <result column="audit_comment" property="auditComment"/>
+        <result column="audit_time" property="auditTime"/>
+        <result column="audit_by" property="auditBy"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+    
+    <select id="selectByCreditCode" resultMap="BaseResultMap">
+        SELECT * FROM res_institution WHERE credit_code = #{creditCode} AND deleted = 0
+    </select>
+    
+    <select id="selectByName" resultMap="BaseResultMap">
+        SELECT * FROM res_institution WHERE name = #{name} AND deleted = 0
+    </select>
+    
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.research.project.mapper.ProjectMemberMapper">
+
+    <resultMap id="BaseResultMap" type="com.research.project.entity.ProjectMember">
+        <id column="id" property="id" />
+        <result column="project_id" property="projectId" />
+        <result column="user_id" property="userId" />
+        <result column="real_name" property="realName" />
+        <result column="institution_name" property="institutionName" />
+        <result column="role" property="role" />
+        <result column="work_ratio" property="workRatio" />
+        <result column="research_field" property="researchField" />
+        <result column="title" property="title" />
+        <result column="duties" property="duties" />
+        <result column="join_time" property="joinTime" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+</mapper>

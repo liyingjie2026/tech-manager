@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.research.project.mapper.DownloadRecordMapper">
+    
+    <resultMap id="BaseResultMap" type="com.research.project.entity.DownloadRecord">
+        <id column="id" property="id"/>
+        <result column="data_id" property="dataId"/>
+        <result column="downloader_id" property="downloaderId"/>
+        <result column="institution_id" property="institutionId"/>
+        <result column="reason" property="reason"/>
+        <result column="download_time" property="downloadTime"/>
+        <result column="status" property="status"/>
+        <result column="audit_comment" property="auditComment"/>
+        <result column="audit_time" property="auditTime"/>
+        <result column="auditor_id" property="auditorId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+
+</mapper>

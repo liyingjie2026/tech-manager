@@ -1,0 +1,1746 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>科研项目管理系统 - 详细设计说明书</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Microsoft YaHei", "SimSun", Arial, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px 60px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .cover {
+            text-align: center;
+            padding: 100px 0;
+            border-bottom: 3px solid #16a085;
+            margin-bottom: 50px;
+        }
+        
+        .cover h1 {
+            font-size: 36px;
+            color: #16a085;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .cover h2 {
+            font-size: 28px;
+            color: #1abc9c;
+            margin-bottom: 60px;
+        }
+        
+        .cover .info {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-top: 80px;
+        }
+        
+        .toc {
+            background: #e8f6f3;
+            padding: 30px;
+            margin-bottom: 40px;
+            border-left: 4px solid #1abc9c;
+        }
+        
+        .toc h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #16a085;
+        }
+        
+        .toc ul {
+            list-style: none;
+        }
+        
+        .toc li {
+            padding: 8px 0;
+            border-bottom: 1px dotted #b2dfdb;
+        }
+        
+        .toc a {
+            color: #16a085;
+            text-decoration: none;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .toc a:hover {
+            color: #138d75;
+        }
+        
+        h1 {
+            font-size: 32px;
+            color: #16a085;
+            border-bottom: 3px solid #1abc9c;
+            padding-bottom: 10px;
+            margin: 40px 0 20px 0;
+        }
+        
+        h2 {
+            font-size: 26px;
+            color: #138d75;
+            margin: 30px 0 15px 0;
+            padding-left: 10px;
+            border-left: 5px solid #1abc9c;
+        }
+        
+        h3 {
+            font-size: 20px;
+            color: #45b39d;
+            margin: 25px 0 12px 0;
+        }
+        
+        p {
+            margin: 12px 0;
+            text-indent: 2em;
+        }
+        
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 40px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        
+        table thead {
+            background: #16a085;
+            color: white;
+        }
+        
+        table th, table td {
+            border: 1px solid #b2dfdb;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        table tbody tr:nth-child(even) {
+            background: #e8f6f3;
+        }
+        
+        .api-box {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .api-box h4 {
+            color: #16a085;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .screenshot {
+            margin: 30px 0;
+            text-align: center;
+            background: #f8f9fa;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .screenshot img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .note {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .note strong {
+            color: #155724;
+        }
+        
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: "Courier New", monospace;
+            color: #c7254e;
+        }
+        
+        pre {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-left: 4px solid #1abc9c;
+            padding: 15px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: "Courier New", monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .page-break {
+            page-break-after: always;
+        }
+        
+        .workflow-diagram {
+            margin: 30px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 封面 -->
+        <div class="cover">
+            <h1>科研项目管理系统</h1>
+            <h2>详细设计说明书</h2>
+            <div class="info">
+                <p>版本：V1.0</p>
+                <p>编制日期：2024年12月</p>
+            </div>
+        </div>
+
+        <!-- 目录 -->
+        <div class="toc">
+            <h2>目录</h2>
+            <ul>
+                <li><a href="#intro"><span>1. 引言</span><span>1</span></a></li>
+                <li><a href="#db-detail"><span>2. 数据库详细设计</span><span>3</span></a></li>
+                <li><a href="#api-detail"><span>3. 接口详细设计</span><span>15</span></a></li>
+                <li><a href="#workflow"><span>4. 业务流程设计</span><span>25</span></a></li>
+                <li><a href="#ui-design"><span>5. 界面设计</span><span>30</span></a></li>
+                <li><a href="#algorithm"><span>6. 核心算法设计</span><span>45</span></a></li>
+            </ul>
+        </div>
+
+        <!-- 第1章 引言 -->
+        <div id="intro" class="page-break">
+            <h1>1. 引言</h1>
+            
+            <h2>1.1 文档目的</h2>
+            <p>本详细设计说明书在概要设计的基础上，对科研项目管理系统的数据库表结构、接口参数、业务流程、界面设计等进行详细描述，为开发人员提供具体的实现指导。</p>
+
+            <h2>1.2 系统概述</h2>
+            <p>科研项目管理系统是一个全流程、一体化的科研管理平台，涵盖项目申报、立项评审、任务执行、中期检查、验收管理、成果登记等全生命周期管理功能。系统采用Spring Boot + Next.js技术栈，前后端分离架构。</p>
+
+            <h2>1.3 系统角色</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th width="20%">角色名称</th>
+                        <th width="80%">角色说明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>系统管理员</td>
+                        <td>负责系统配置、用户管理、权限管理、数据字典维护等</td>
+                    </tr>
+                    <tr>
+                        <td>主管部门管理员</td>
+                        <td>负责项目审批、专家抽取、评审管理、验收组织等</td>
+                    </tr>
+                    <tr>
+                        <td>项目负责人</td>
+                        <td>负责项目申报、任务书编制、进度报告、成果提交等</td>
+                    </tr>
+                    <tr>
+                        <td>评审专家</td>
+                        <td>负责项目评审、打分、撰写评审意见</td>
+                    </tr>
+                    <tr>
+                        <td>科研单位管理员</td>
+                        <td>负责本单位项目管理、人员管理、资源共享等</td>
+                    </tr>
+                    <tr>
+                        <td>普通用户</td>
+                        <td>查看项目信息、资源信息、需求信息等</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 第2章 数据库详细设计 -->
+        <div id="db-detail" class="page-break">
+            <h1>2. 数据库详细设计</h1>
+
+            <h2>2.1 数据库表清单</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th width="10%">序号</th>
+                        <th width="30%">表名</th>
+                        <th width="30%">中文名</th>
+                        <th width="30%">说明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>users</td><td>用户表</td><td>存储用户基本信息</td></tr>
+                    <tr><td>2</td><td>roles</td><td>角色表</td><td>存储系统角色信息</td></tr>
+                    <tr><td>3</td><td>permissions</td><td>权限表</td><td>存储权限信息</td></tr>
+                    <tr><td>4</td><td>role_permissions</td><td>角色权限关联表</td><td>角色与权限的多对多关系</td></tr>
+                    <tr><td>5</td><td>institutions</td><td>科研单位表</td><td>存储科研单位信息</td></tr>
+                    <tr><td>6</td><td>projects</td><td>项目表</td><td>存储项目基本信息</td></tr>
+                    <tr><td>7</td><td>task_books</td><td>任务书表</td><td>存储项目任务书</td></tr>
+                    <tr><td>8</td><td>changes</td><td>项目变更表</td><td>存储项目变更记录</td></tr>
+                    <tr><td>9</td><td>midterms</td><td>中期检查表</td><td>存储中期检查信息</td></tr>
+                    <tr><td>10</td><td>annuals</td><td>年度检查表</td><td>存储年度检查信息</td></tr>
+                    <tr><td>11</td><td>acceptances</td><td>验收表</td><td>存储项目验收信息</td></tr>
+                    <tr><td>12</td><td>experts</td><td>专家表</td><td>存储专家信息</td></tr>
+                    <tr><td>13</td><td>expert_reviews</td><td>专家评审表</td><td>存储评审记录</td></tr>
+                    <tr><td>14</td><td>achievements</td><td>科研成果表</td><td>存储科研成果信息</td></tr>
+                    <tr><td>15</td><td>awards</td><td>获奖表</td><td>存储获奖信息</td></tr>
+                    <tr><td>16</td><td>resources</td><td>资源表</td><td>存储科研资源信息</td></tr>
+                    <tr><td>17</td><td>demands</td><td>需求表</td><td>存储科研需求信息</td></tr>
+                    <tr><td>18</td><td>dictionary</td><td>数据字典表</td><td>存储字典类型</td></tr>
+                    <tr><td>19</td><td>dictionary_items</td><td>字典项表</td><td>存储字典项</td></tr>
+                    <tr><td>20</td><td>workflows</td><td>工作流表</td><td>存储工作流定义</td></tr>
+                    <tr><td>21</td><td>notices</td><td>通知表</td><td>存储系统通知</td></tr>
+                    <tr><td>22</td><td>files</td><td>文件表</td><td>存储上传文件信息</td></tr>
+                </tbody>
+            </table>
+
+            <h2>2.2 核心表结构详细设计</h2>
+
+            <h3>2.2.1 users（用户表）</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th width="18%">字段名</th>
+                        <th width="15%">数据类型</th>
+                        <th width="8%">主键</th>
+                        <th width="8%">非空</th>
+                        <th width="8%">唯一</th>
+                        <th width="15%">默认值</th>
+                        <th width="28%">说明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>id</td><td>BIGINT</td><td>是</td><td>是</td><td>是</td><td>AUTO_INCREMENT</td><td>主键ID</td></tr>
+                    <tr><td>username</td><td>VARCHAR(50)</td><td>否</td><td>是</td><td>是</td><td>-</td><td>用户名</td></tr>
+                    <tr><td>password</td><td>VARCHAR(100)</td><td>否</td><td>是</td><td>否</td><td>-</td><td>密码（BCrypt加密）</td></tr>
+                    <tr><td>real_name</td><td>VARCHAR(50)</td><td>否</td><td>是</td><td>否</td><td>-</td><td>真实姓名</td></tr>
+                    <tr><td>id_card</td><td>VARCHAR(50)</td><td>否</td><td>否</td><td>否</td><td>-</td><td>身份证号（加密存储）</td></tr>
+                    <tr><td>phone</td><td>VARCHAR(20)</td><td>否</td><td>否</td><td>否</td><td>-</td><td>手机号</td></tr>
+                    <tr><td>email</td><td>VARCHAR(100)</td><td>否</td><td>否</td><td>否</td><td>-</td><td>电子邮箱</td></tr>
+                    <tr><td>institution_id</td><td>BIGINT</td><td>否</td><td>否</td><td>否</td><td>-</td><td>所属单位ID</td></tr>
+                    <tr><td>role_id</td><td>BIGINT</td><td>否</td><td>是</td><td>否</td><td>-</td><td>角色ID</td></tr>
+                    <tr><td>status</td><td>TINYINT</td><td>否</td><td>是</td><td>否</td><td>1</td><td>状态：0-禁用，1-启用</td></tr>
+                    <tr><td>is_deleted</td><td>TINYINT</td><td>否</td><td>是</td><td>否</td><td>0</td><td>是否删除：0-否，1-是</td></tr>
+                    <tr><td>create_by</td><td>BIGINT</td><td>否</td><td>否</td><td>否</td><td>-</td><td>创建人ID</td></tr>
+                    <tr><td>create_time</td><td>DATETIME</td><td>否</td><td>是</td><td>否</td><td>CURRENT_TIMESTAMP</td><td>创建时间</td></tr>
+                    <tr><td>update_by</td><td>BIGINT</td><td>否</td><td>否</td><td>否</td><td>-</td><td>更新人ID</td></tr>
+                    <tr><td>update_time</td><td>DATETIME</td><td>否</td><td>是</td><td>否</td><td>CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP</td><td>更新时间</td></tr>
+                </tbody>
+            </table>
+
+            <div class="note">
+                <strong>索引设计：</strong>
+                <ul>
+                    <li>PRIMARY KEY (id)</li>
+                    <li>UNIQUE KEY uk_username (username)</li>
+                    <li>KEY idx_institution_id (institution_id)</li>
+                    <li>KEY idx_role_id (role_id)</li>
+                    <li>KEY idx_status (status)</li>
+                </ul>
+            </div>
+
+            <h3>2.2.2 projects（项目表）</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th width="18%">字段名</th>
+                        <th width="15%">数据类型</th>
+                        <th width="8%">主键</th>
+                        <th width="8%">非空</th>
+                        <th width="8%">唯一</th>
+                        <th width="15%">默认值</th>
+                        <th width="28%">说明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>id</td><td>BIGINT</td><td>是</td><td>是</td><td>是</td><td>AUTO_INCREMENT</td><td>主键ID</td></tr>
+                    <tr><td>project_no</td><td>VARCHAR(50)</td><td>否</td><td>是</td><td>是</td><td>-</td><td>项目编号</td></tr>
+                    <tr><td>project_name</td><td>VARCHAR(200)</td><td>否</td><td>是</td><td>否</td><td>-</td><td>项目名称</td></tr>
+                    <tr><td>project_type</td><td>VARCHAR(50)</td><td>否</td><td>是</td><td>否</td><td>-</td><td>项目类型</td></tr>
+                    <tr><td>institution_id</td><td>BIGINT</td><td>否</td><td>是</td><td>否</td><td>-</td><td>承担单位ID</td></tr>
+                    <tr><td>leader_id</td><td>BIGINT</td><td>否</td><td>是</td><td>否</td><td>-</td><td>项目负责人ID</td></tr>
+                    <tr><td>start_date</td><td>DATE</td><td>否</td><td>否</td><td>否</td><td>-</td><td>开始日期</td></tr>
+                    <tr><td>end_date</td><td>DATE</td><td>否</td><td>否</td><td>否</td><td>-</td><td>结束日期</td></tr>
+                    <tr><td>total_budget</td><td>DECIMAL(15,2)</td><td>否</td><td>否</td><td>否</td><td>0.00</td><td>总预算（万元）</td></tr>
+                    <tr><td>content</td><td>TEXT</td><td>否</td><td>否</td><td>否</td><td>-</td><td>研究内容</td></tr>
+                    <tr><td>goal</td><td>TEXT</td><td>否</td><td>否</td><td>否</td><td>-</td><td>研究目标</td></tr>
+                    <tr><td>status</td><td>VARCHAR(20)</td><td>否</td><td>是</td><td>否</td><td>DRAFT</td><td>状态：DRAFT-草稿，SUBMITTED-已提交，REVIEWING-评审中，APPROVED-已立项，EXECUTING-执行中，COMPLETED-已完成，CLOSED-已结项</td></tr>
+                    <tr><td>workflow_status</td><td>VARCHAR(50)</td><td>否</td><td>否</td><td>否</td><td>-</td><td>工作流状态</td></tr>
+                    <tr><td>submit_time</td><td>DATETIME</td><td>否</td><td>否</td><td>否</td><td>-</td><td>提交时间</td></tr>
+                    <tr><td>approve_time</td><td>DATETIME</td><td>否</td><td>否</td><td>否</td><td>-</td><td>立项时间</td></tr>
+                    <tr><td>is_deleted</td><td>TINYINT</td><td>否</td><td>是</td><td>否</td><td>0</td><td>是否删除</td></tr>
+                    <tr><td>create_by</td><td>BIGINT</td><td>否</td><td>否</td><td>否</td><td>-</td><td>创建人ID</td></tr>
+                    <tr><td>create_time</td><td>DATETIME</td><td>否</td><td>是</td><td>否</td><td>CURRENT_TIMESTAMP</td><td>创建时间</td></tr>
+                    <tr><td>update_by</td><td>BIGINT</td><td>否</td><td>否</td><td>否</td><td>-</td><td>更新人ID</td></tr>
+                    <tr><td>update_time</td><td>DATETIME</td><td>否</td><td>是</td><td>否</td><td>CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP</td><td>更新时间</td></tr>
+                </tbody>
+            </table>
+
+            <div class="note">
+                <strong>索引设计：</strong>
+                <ul>
+                    <li>PRIMARY KEY (id)</li>
+                    <li>UNIQUE KEY uk_project_no (project_no)</li>
+                    <li>KEY idx_institution_id (institution_id)</li>
+                    <li>KEY idx_leader_id (leader_id)</li>
+                    <li>KEY idx_status (status)</li>
+                    <li>KEY idx_project_type (project_type)</li>
+                    <li>KEY idx_create_time (create_time)</li>
+                </ul>
+            </div>
+
+            <h3>2.2.3 expert_reviews（专家评审表）</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th width="18%">字段名</th>
+                        <th width="15%">数据类型</th>
+                        <th width="8%">主键</th>
+                        <th width="8%">非空</th>
+                        <th width="8%">唯一</th>
+                        <th width="15%">默认值</th>
+                        <th width="28%">说明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>id</td><td>BIGINT</td><td>是</td><td>是</td><td>是</td><td>AUTO_INCREMENT</td><td>主键ID</td></tr>
+                    <tr><td>review_no</td><td>VARCHAR(50)</td><td>否</td><td>是</td><td>是</td><td>-</td><td>评审编号</td></tr>
+                    <tr><td>project_id</td><td>BIGINT</td><td>否</td><td>是</td><td>否</td><td>-</td><td>项目ID</td></tr>
+                    <tr><td>expert_id</td><td>BIGINT</td><td>否</td><td>是</td><td>否</td><td>-</td><td>专家ID</td></tr>
+                    <tr><td>review_type</td><td>VARCHAR(20)</td><td>否</td><td>是</td><td>否</td><td>-</td><td>评审类型：PROJECT-立项评审，MIDTERM-中期评审，ANNUAL-年度评审，ACCEPTANCE-验收评审</td></tr>
+                    <tr><td>score</td><td>DECIMAL(5,2)</td><td>否</td><td>否</td><td>否</td><td>-</td><td>评分</td></tr>
+                    <tr><td>opinion</td><td>TEXT</td><td>否</td><td>否</td><td>否</td><td>-</td><td>评审意见</td></tr>
+                    <tr><td>suggestion</td><td>TEXT</td><td>否</td><td>否</td><td>否</td><td>-</td><td>改进建议</td></tr>
+                    <tr><td>conclusion</td><td>VARCHAR(20)</td><td>否</td><td>否</td><td>否</td><td>-</td><td>评审结论：PASS-通过，REJECT-不通过，MODIFY-修改后通过</td></tr>
+                    <tr><td>status</td><td>VARCHAR(20)</td><td>否</td><td>是</td><td>否</td><td>PENDING</td><td>状态：PENDING-待评审，REVIEWING-评审中，SUBMITTED-已提交</td></tr>
+                    <tr><td>submit_time</td><td>DATETIME</td><td>否</td><td>否</td><td>否</td><td>-</td><td>提交时间</td></tr>
+                    <tr><td>is_deleted</td><td>TINYINT</td><td>否</td><td>是</td><td>否</td><td>0</td><td>是否删除</td></tr>
+                    <tr><td>create_time</td><td>DATETIME</td><td>否</td><td>是</td><td>否</td><td>CURRENT_TIMESTAMP</td><td>创建时间</td></tr>
+                    <tr><td>update_time</td><td>DATETIME</td><td>否</td><td>是</td><td>否</td><td>CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP</td><td>更新时间</td></tr>
+                </tbody>
+            </table>
+
+            <div class="note">
+                <strong>索引设计：</strong>
+                <ul>
+                    <li>PRIMARY KEY (id)</li>
+                    <li>UNIQUE KEY uk_review_no (review_no)</li>
+                    <li>KEY idx_project_id (project_id)</li>
+                    <li>KEY idx_expert_id (expert_id)</li>
+                    <li>KEY idx_review_type (review_type)</li>
+                    <li>KEY idx_status (status)</li>
+                </ul>
+            </div>
+
+            <h2>2.3 数据库ER关系图</h2>
+            <div class="workflow-diagram">
+                <svg width="900" height="700" xmlns="http://www.w3.org/2000/svg">
+                    <!-- 用户和权限相关 -->
+                    <rect x="50" y="50" width="120" height="80" fill="#3498db" stroke="#2980b9" stroke-width="2" rx="5"/>
+                    <text x="110" y="85" text-anchor="middle" fill="white" font-weight="bold">users</text>
+                    <text x="110" y="105" text-anchor="middle" fill="white" font-size="12">用户表</text>
+                    
+                    <rect x="220" y="50" width="120" height="80" fill="#3498db" stroke="#2980b9" stroke-width="2" rx="5"/>
+                    <text x="280" y="85" text-anchor="middle" fill="white" font-weight="bold">roles</text>
+                    <text x="280" y="105" text-anchor="middle" fill="white" font-size="12">角色表</text>
+                    
+                    <rect x="390" y="50" width="140" height="80" fill="#3498db" stroke="#2980b9" stroke-width="2" rx="5"/>
+                    <text x="460" y="85" text-anchor="middle" fill="white" font-weight="bold">permissions</text>
+                    <text x="460" y="105" text-anchor="middle" fill="white" font-size="12">权限表</text>
+                    
+                    <!-- 项目相关 -->
+                    <rect x="50" y="180" width="120" height="80" fill="#27ae60" stroke="#229954" stroke-width="2" rx="5"/>
+                    <text x="110" y="215" text-anchor="middle" fill="white" font-weight="bold">projects</text>
+                    <text x="110" y="235" text-anchor="middle" fill="white" font-size="12">项目表</text>
+                    
+                    <rect x="220" y="180" width="120" height="80" fill="#27ae60" stroke="#229954" stroke-width="2" rx="5"/>
+                    <text x="280" y="215" text-anchor="middle" fill="white" font-weight="bold">task_books</text>
+                    <text x="280" y="235" text-anchor="middle" fill="white" font-size="12">任务书表</text>
+                    
+                    <rect x="390" y="180" width="120" height="80" fill="#27ae60" stroke="#229954" stroke-width="2" rx="5"/>
+                    <text x="450" y="215" text-anchor="middle" fill="white" font-weight="bold">changes</text>
+                    <text x="450" y="235" text-anchor="middle" fill="white" font-size="12">变更表</text>
+                    
+                    <!-- 检查相关 -->
+                    <rect x="50" y="310" width="120" height="80" fill="#9b59b6" stroke="#8e44ad" stroke-width="2" rx="5"/>
+                    <text x="110" y="345" text-anchor="middle" fill="white" font-weight="bold">midterms</text>
+                    <text x="110" y="365" text-anchor="middle" fill="white" font-size="12">中期检查表</text>
+                    
+                    <rect x="220" y="310" width="120" height="80" fill="#9b59b6" stroke="#8e44ad" stroke-width="2" rx="5"/>
+                    <text x="280" y="345" text-anchor="middle" fill="white" font-weight="bold">annuals</text>
+                    <text x="280" y="365" text-anchor="middle" fill="white" font-size="12">年度检查表</text>
+                    
+                    <rect x="390" y="310" width="140" height="80" fill="#9b59b6" stroke="#8e44ad" stroke-width="2" rx="5"/>
+                    <text x="460" y="345" text-anchor="middle" fill="white" font-weight="bold">acceptances</text>
+                    <text x="460" y="365" text-anchor="middle" fill="white" font-size="12">验收表</text>
+                    
+                    <!-- 专家评审 -->
+                    <rect x="600" y="180" width="140" height="80" fill="#e74c3c" stroke="#c0392b" stroke-width="2" rx="5"/>
+                    <text x="670" y="215" text-anchor="middle" fill="white" font-weight="bold">experts</text>
+                    <text x="670" y="235" text-anchor="middle" fill="white" font-size="12">专家表</text>
+                    
+                    <rect x="600" y="310" width="160" height="80" fill="#e74c3c" stroke="#c0392b" stroke-width="2" rx="5"/>
+                    <text x="680" y="345" text-anchor="middle" fill="white" font-weight="bold">expert_reviews</text>
+                    <text x="680" y="365" text-anchor="middle" fill="white" font-size="12">专家评审表</text>
+                    
+                    <!-- 成果和资源 -->
+                    <rect x="50" y="440" width="140" height="80" fill="#f39c12" stroke="#d68910" stroke-width="2" rx="5"/>
+                    <text x="120" y="475" text-anchor="middle" fill="white" font-weight="bold">achievements</text>
+                    <text x="120" y="495" text-anchor="middle" fill="white" font-size="12">成果表</text>
+                    
+                    <rect x="240" y="440" width="120" height="80" fill="#f39c12" stroke="#d68910" stroke-width="2" rx="5"/>
+                    <text x="300" y="475" text-anchor="middle" fill="white" font-weight="bold">awards</text>
+                    <text x="300" y="495" text-anchor="middle" fill="white" font-size="12">获奖表</text>
+                    
+                    <rect x="410" y="440" width="130" height="80" fill="#16a085" stroke="#138d75" stroke-width="2" rx="5"/>
+                    <text x="475" y="475" text-anchor="middle" fill="white" font-weight="bold">resources</text>
+                    <text x="475" y="495" text-anchor="middle" fill="white" font-size="12">资源表</text>
+                    
+                    <rect x="590" y="440" width="120" height="80" fill="#16a085" stroke="#138d75" stroke-width="2" rx="5"/>
+                    <text x="650" y="475" text-anchor="middle" fill="white" font-weight="bold">demands</text>
+                    <text x="650" y="495" text-anchor="middle" fill="white" font-size="12">需求表</text>
+                    
+                    <!-- 系统表 -->
+                    <rect x="200" y="570" width="120" height="80" fill="#34495e" stroke="#2c3e50" stroke-width="2" rx="5"/>
+                    <text x="260" y="605" text-anchor="middle" fill="white" font-weight="bold">workflows</text>
+                    <text x="260" y="625" text-anchor="middle" fill="white" font-size="12">工作流表</text>
+                    
+                    <rect x="370" y="570" width="120" height="80" fill="#34495e" stroke="#2c3e50" stroke-width="2" rx="5"/>
+                    <text x="430" y="605" text-anchor="middle" fill="white" font-weight="bold">notices</text>
+                    <text x="430" y="625" text-anchor="middle" fill="white" font-size="12">通知表</text>
+                    
+                    <rect x="540" y="570" width="120" height="80" fill="#34495e" stroke="#2c3e50" stroke-width="2" rx="5"/>
+                    <text x="600" y="605" text-anchor="middle" fill="white" font-weight="bold">files</text>
+                    <text x="600" y="625" text-anchor="middle" fill="white" font-size="12">文件表</text>
+                    
+                    <!-- 关系线 -->
+                    <line x1="170" y1="90" x2="220" y2="90" stroke="#7f8c8d" stroke-width="2"/>
+                    <line x1="340" y1="90" x2="390" y2="90" stroke="#7f8c8d" stroke-width="2"/>
+                    <line x1="110" y1="130" x2="110" y2="180" stroke="#7f8c8d" stroke-width="2"/>
+                    <line x1="170" y1="220" x2="220" y2="220" stroke="#7f8c8d" stroke-width="2"/>
+                    <line x1="340" y1="220" x2="390" y2="220" stroke="#7f8c8d" stroke-width="2"/>
+                    <line x1="110" y1="260" x2="110" y2="310" stroke="#7f8c8d" stroke-width="2"/>
+                    <line x1="170" y1="350" x2="220" y2="350" stroke="#7f8c8d" stroke-width="2"/>
+                    <line x1="530" y1="220" x2="600" y2="220" stroke="#7f8c8d" stroke-width="2"/>
+                    <line x1="670" y1="260" x2="680" y2="310" stroke="#7f8c8d" stroke-width="2"/>
+                    <line x1="110" y1="390" x2="120" y2="440" stroke="#7f8c8d" stroke-width="2"/>
+                </svg>
+                <p><strong>图2-1 数据库ER关系图（简化版）</strong></p>
+            </div>
+        </div>
+
+        <!-- 第3章 接口详细设计 -->
+        <div id="api-detail" class="page-break">
+            <h1>3. 接口详细设计</h1>
+
+            <h2>3.1 接口概述</h2>
+            <p>系统所有接口均采用RESTful风格设计，使用JSON格式进行数据交互。本章节详细说明核心接口的请求参数、响应格式和调用示例。</p>
+
+            <h2>3.2 认证接口</h2>
+
+            <div class="api-box">
+                <h4>3.2.1 用户登录</h4>
+                <p><strong>接口地址：</strong><code>POST /api/auth/login</code></p>
+                <p><strong>接口描述：</strong>用户使用用户名和密码进行登录认证</p>
+                
+                <p><strong>请求参数：</strong></p>
+                <pre>{
+    "username": "string",  // 用户名，必填
+    "password": "string",  // 密码，必填
+    "captcha": "string",   // 验证码，可选
+    "remember": boolean    // 是否记住密码，可选，默认false
+}</pre>
+
+                <p><strong>响应数据：</strong></p>
+                <pre>{
+    "code": 200,
+    "message": "登录成功",
+    "data": {
+        "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+        "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+        "expiresIn": 86400,  // Token有效期（秒）
+        "user": {
+            "id": 1,
+            "username": "admin",
+            "realName": "管理员",
+            "roleName": "系统管理员",
+            "institutionName": "科技局"
+        }
+    }
+}</pre>
+
+                <p><strong>错误响应：</strong></p>
+                <pre>{
+    "code": 401,
+    "message": "用户名或密码错误",
+    "data": null
+}</pre>
+            </div>
+
+            <div class="api-box">
+                <h4>3.2.2 用户注册</h4>
+                <p><strong>接口地址：</strong><code>POST /api/auth/register</code></p>
+                <p><strong>接口描述：</strong>新用户注册账号</p>
+                
+                <p><strong>请求参数：</strong></p>
+                <pre>{
+    "username": "string",      // 用户名，必填，6-20位字母数字
+    "password": "string",      // 密码，必填，8-20位包含字母数字
+    "confirmPassword": "string", // 确认密码，必填
+    "realName": "string",      // 真实姓名，必填
+    "phone": "string",         // 手机号，必填
+    "email": "string",         // 邮箱，可选
+    "institutionId": number,   // 单位ID，必填
+    "smsCode": "string"        // 短信验证码，必填
+}</pre>
+
+                <p><strong>响应数据：</strong></p>
+                <pre>{
+    "code": 200,
+    "message": "注册成功，请等待审核",
+    "data": {
+        "userId": 10
+    }
+}</pre>
+            </div>
+
+            <h2>3.3 项目管理接口</h2>
+
+            <div class="api-box">
+                <h4>3.3.1 项目列表查询</h4>
+                <p><strong>接口地址：</strong><code>GET /api/projects</code></p>
+                <p><strong>接口描述：</strong>分页查询项目列表，支持多条件筛选</p>
+                
+                <p><strong>请求参数（Query）：</strong></p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="20%">参数名</th>
+                            <th width="15%">类型</th>
+                            <th width="10%">必填</th>
+                            <th width="55%">说明</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>page</td><td>Integer</td><td>否</td><td>页码，默认1</td></tr>
+                        <tr><td>size</td><td>Integer</td><td>否</td><td>每页数量，默认10</td></tr>
+                        <tr><td>keyword</td><td>String</td><td>否</td><td>关键词搜索（项目名称/编号）</td></tr>
+                        <tr><td>status</td><td>String</td><td>否</td><td>项目状态</td></tr>
+                        <tr><td>projectType</td><td>String</td><td>否</td><td>项目类型</td></tr>
+                        <tr><td>institutionId</td><td>Long</td><td>否</td><td>承担单位ID</td></tr>
+                        <tr><td>startDate</td><td>String</td><td>否</td><td>开始日期（起）</td></tr>
+                        <tr><td>endDate</td><td>String</td><td>否</td><td>开始日期（止）</td></tr>
+                    </tbody>
+                </table>
+
+                <p><strong>响应数据：</strong></p>
+                <pre>{
+    "code": 200,
+    "message": "success",
+    "data": {
+        "total": 100,
+        "pages": 10,
+        "current": 1,
+        "size": 10,
+        "records": [
+            {
+                "id": 1,
+                "projectNo": "2024-01-001",
+                "projectName": "人工智能技术研究",
+                "projectType": "重点项目",
+                "institutionName": "科技大学",
+                "leaderName": "张三",
+                "totalBudget": 50.00,
+                "startDate": "2024-01-01",
+                "endDate": "2026-12-31",
+                "status": "EXECUTING",
+                "statusName": "执行中",
+                "submitTime": "2024-01-01 10:00:00",
+                "approveTime": "2024-01-15 14:30:00"
+            }
+        ]
+    }
+}</pre>
+            </div>
+
+            <div class="api-box">
+                <h4>3.3.2 创建项目</h4>
+                <p><strong>接口地址：</strong><code>POST /api/projects</code></p>
+                <p><strong>接口描述：</strong>创建新项目申请</p>
+                <p><strong>权限要求：</strong>项目负责人、科研单位管理员</p>
+                
+                <p><strong>请求参数：</strong></p>
+                <pre>{
+    "projectName": "string",        // 项目名称，必填，最长200字
+    "projectType": "string",        // 项目类型，必填
+    "institutionId": number,        // 承担单位ID，必填
+    "leaderId": number,             // 项目负责人ID，必填
+    "startDate": "2024-01-01",      // 开始日期，必填
+    "endDate": "2026-12-31",        // 结束日期，必填
+    "totalBudget": 50.00,           // 总预算，必填
+    "content": "string",            // 研究内容，必填
+    "goal": "string",               // 研究目标，必填
+    "technicalRoute": "string",     // 技术路线，必填
+    "expectedResult": "string",     // 预期成果，必填
+    "members": [                    // 项目组成员，可选
+        {
+            "userId": number,
+            "role": "string"
+        }
+    ],
+    "attachments": [                // 附件文件ID列表，可选
+        1, 2, 3
+    ]
+}</pre>
+
+                <p><strong>响应数据：</strong></p>
+                <pre>{
+    "code": 200,
+    "message": "项目创建成功",
+    "data": {
+        "id": 10,
+        "projectNo": "2024-01-010"
+    }
+}</pre>
+            </div>
+
+            <div class="api-box">
+                <h4>3.3.3 项目详情</h4>
+                <p><strong>接口地址：</strong><code>GET /api/projects/{id}</code></p>
+                <p><strong>接口描述：</strong>获取项目详细信息</p>
+                
+                <p><strong>路径参数：</strong></p>
+                <ul>
+                    <li>id: 项目ID（Long类型）</li>
+                </ul>
+
+                <p><strong>响应数据：</strong></p>
+                <pre>{
+    "code": 200,
+    "message": "success",
+    "data": {
+        "id": 1,
+        "projectNo": "2024-01-001",
+        "projectName": "人工智能技术研究",
+        "projectType": "重点项目",
+        "institution": {
+            "id": 1,
+            "name": "科技大学"
+        },
+        "leader": {
+            "id": 5,
+            "name": "张三",
+            "phone": "13800138000"
+        },
+        "startDate": "2024-01-01",
+        "endDate": "2026-12-31",
+        "totalBudget": 50.00,
+        "content": "研究内容详情...",
+        "goal": "研究目标详情...",
+        "technicalRoute": "技术路线详情...",
+        "expectedResult": "预期成果详情...",
+        "status": "EXECUTING",
+        "statusName": "执行中",
+        "workflowStatus": "已立项",
+        "members": [
+            {
+                "userId": 6,
+                "userName": "李四",
+                "role": "核心成员"
+            }
+        ],
+        "attachments": [
+            {
+                "id": 1,
+                "fileName": "项目申请书.pdf",
+                "fileUrl": "https://example.com/files/xxx.pdf"
+            }
+        ],
+        "createTime": "2024-01-01 10:00:00",
+        "updateTime": "2024-01-15 14:30:00"
+    }
+}</pre>
+            </div>
+
+            <h2>3.4 专家评审接口</h2>
+
+            <div class="api-box">
+                <h4>3.4.1 创建评审任务</h4>
+                <p><strong>接口地址：</strong><code>POST /api/expert-reviews</code></p>
+                <p><strong>接口描述：</strong>为项目创建评审任务并分配专家</p>
+                <p><strong>权限要求：</strong>主管部门管理员</p>
+                
+                <p><strong>请求参数：</strong></p>
+                <pre>{
+    "projectId": number,           // 项目ID，必填
+    "reviewType": "string",        // 评审类型：PROJECT/MIDTERM/ANNUAL/ACCEPTANCE，必填
+    "expertIds": [1, 2, 3],       // 专家ID列表，必填，至少3人
+    "deadline": "2024-02-01",     // 评审截止日期，必填
+    "requirements": "string"       // 评审要求说明，可选
+}</pre>
+
+                <p><strong>  "2024-02-01",     // 评审截止日期，必填
+    "requirements": "string"       // 评审要求说明，可选
+}</pre>
+
+                <p><strong>响应数据：</strong></p>
+                <pre>{
+    "code": 200,
+    "message": "评审任务创建成功",
+    "data": {
+        "reviewId": 20,
+        "reviewNo": "REV-2024-001",
+        "expertCount": 3
+    }
+}</pre>
+            </div>
+
+            <div class="api-box">
+                <h4>3.4.2 专家提交评审</h4>
+                <p><strong>接口地址：</strong><code>POST /api/expert-reviews/{id}/submit</code></p>
+                <p><strong>接口描述：</strong>专家提交评审意见和打分</p>
+                <p><strong>权限要求：</strong>评审专家</p>
+                
+                <p><strong>路径参数：</strong></p>
+                <ul>
+                    <li>id: 评审任务ID（Long类型）</li>
+                </ul>
+
+                <p><strong>请求参数：</strong></p>
+                <pre>{
+    "score": 85.5,                 // 评分，必填，0-100
+    "opinion": "string",           // 评审意见，必填，最少50字
+    "suggestion": "string",        // 改进建议，可选
+    "conclusion": "PASS",          // 评审结论：PASS/REJECT/MODIFY，必填
+    "detailScores": {              // 详细评分项，可选
+        "innovation": 90,          // 创新性
+        "feasibility": 85,         // 可行性
+        "significance": 88         // 重要性
+    }
+}</pre>
+
+                <p><strong>响应数据：</strong></p>
+                <pre>{
+    "code": 200,
+    "message": "评审提交成功",
+    "data": null
+}</pre>
+            </div>
+
+            <h2>3.5 文件上传接口</h2>
+
+            <div class="api-box">
+                <h4>3.5.1 单文件上传</h4>
+                <p><strong>接口地址：</strong><code>POST /api/files/upload</code></p>
+                <p><strong>接口描述：</strong>上传单个文件</p>
+                <p><strong>Content-Type：</strong>multipart/form-data</p>
+                
+                <p><strong>请求参数：</strong></p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="20%">参数名</th>
+                            <th width="15%">类型</th>
+                            <th width="10%">必填</th>
+                            <th width="55%">说明</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>file</td><td>File</td><td>是</td><td>上传的文件</td></tr>
+                        <tr><td>bizType</td><td>String</td><td>是</td><td>业务类型：project/achievement/resource等</td></tr>
+                        <tr><td>bizId</td><td>Long</td><td>否</td><td>业务ID</td></tr>
+                    </tbody>
+                </table>
+
+                <p><strong>响应数据：</strong></p>
+                <pre>{
+    "code": 200,
+    "message": "上传成功",
+    "data": {
+        "id": 100,
+        "fileName": "项目申请书.pdf",
+        "fileSize": 2048576,
+        "fileType": "application/pdf",
+        "fileUrl": "https://example.com/files/2024/01/xxx.pdf",
+        "uploadTime": "2024-01-01 10:00:00"
+    }
+}</pre>
+            </div>
+
+            <div class="note">
+                <strong>接口调用说明：</strong>
+                <ul>
+                    <li>所有需要认证的接口都需要在Header中携带Token：<code>Authorization: Bearer {token}</code></li>
+                    <li>接口限流：每个用户每分钟最多调用100次接口</li>
+                    <li>文件上传限制：单个文件最大50MB，支持的文件类型：pdf、doc、docx、xls、xlsx、jpg、png</li>
+                    <li>分页查询默认每页10条，最大100条</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 第4章 业务流程设计 -->
+        <div id="workflow" class="page-break">
+            <h1>4. 业务流程设计</h1>
+
+            <h2>4.1 项目申报流程</h2>
+            <div class="workflow-diagram">
+                <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+                    <!-- 开始 -->
+                    <ellipse cx="400" cy="40" rx="60" ry="30" fill="#27ae60" stroke="#229954" stroke-width="2"/>
+                    <text x="400" y="48" text-anchor="middle" fill="white" font-weight="bold">开始</text>
+                    
+                    <!-- 填写申请 -->
+                    <rect x="330" y="100" width="140" height="60" fill="#3498db" stroke="#2980b9" stroke-width="2" rx="5"/>
+                    <text x="400" y="135" text-anchor="middle" fill="white">项目负责人</text>
+                    <text x="400" y="155" text-anchor="middle" fill="white" font-size="14">填写项目申请</text>
+                    
+                    <!-- 单位审核 -->
+                    <rect x="330" y="200" width="140" height="60" fill="#3498db" stroke="#2980b9" stroke-width="2" rx="5"/>
+                    <text x="400" y="235" text-anchor="middle" fill="white">科研单位</text>
+                    <text x="400" y="255" text-anchor="middle" fill="white" font-size="14">单位审核</text>
+                    
+                    <!-- 形式审查 -->
+                    <rect x="330" y="300" width="140" height="60" fill="#9b59b6" stroke="#8e44ad" stroke-width="2" rx="5"/>
+                    <text x="400" y="335" text-anchor="middle" fill="white">主管部门</text>
+                    <text x="400" y="355" text-anchor="middle" fill="white" font-size="14">形式审查</text>
+                    
+                    <!-- 抽取专家 -->
+                    <rect x="330" y="400" width="140" height="60" fill="#9b59b6" stroke="#8e44ad" stroke-width="2" rx="5"/>
+                    <text x="400" y="435" text-anchor="middle" fill="white">主管部门</text>
+                    <text x="400" y="455" text-anchor="middle" fill="white" font-size="14">抽取评审专家</text>
+                    
+                    <!-- 专家评审 -->
+                    <rect x="100" y="500" width="140" height="60" fill="#e74c3c" stroke="#c0392b" stroke-width="2" rx="5"/>
+                    <text x="170" y="535" text-anchor="middle" fill="white">评审专家</text>
+                    <text x="170" y="555" text-anchor="middle" fill="white" font-size="14">在线评审打分</text>
+                    
+                    <!-- 立项审批 -->
+                    <rect x="560" y="500" width="140" height="60" fill="#9b59b6" stroke="#8e44ad" stroke-width="2" rx="5"/>
+                    <text x="630" y="535" text-anchor="middle" fill="white">主管部门</text>
+                    <text x="630" y="555" text-anchor="middle" fill="white" font-size="14">立项审批</text>
+                    
+                    <!-- 结束 -->
+                    <ellipse cx="630" cy="620" rx="60" ry="30" fill="#27ae60" stroke="#229954" stroke-width="2"/>
+                    <text x="630" y="628" text-anchor="middle" fill="white" font-weight="bold">结束</text>
+                    
+                    <!-- 不通过 -->
+                    <ellipse cx="170" cy="620" rx="60" ry="30" fill="#e74c3c" stroke="#c0392b" stroke-width="2"/>
+                    <text x="170" y="628" text-anchor="middle" fill="white" font-weight="bold">不通过</text>
+                    
+                    <!-- 连接线 -->
+                    <line x1="400" y1="70" x2="400" y2="100" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow2)"/>
+                    <line x1="400" y1="160" x2="400" y2="200" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow2)"/>
+                    <line x1="400" y1="260" x2="400" y2="300" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow2)"/>
+                    <line x1="400" y1="360" x2="400" y2="400" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow2)"/>
+                    <line x1="350" y1="460" x2="200" y2="500" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow2)"/>
+                    <line x1="450" y1="460" x2="600" y2="500" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow2)"/>
+                    <line x1="630" y1="560" x2="630" y2="590" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow2)"/>
+                    <line x1="170" y1="560" x2="170" y2="590" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow2)"/>
+                    
+                    <!-- 标注 -->
+                    <text x="300" y="485" fill="#7f8c8d" font-size="12">通过</text>
+                    <text x="480" y="485" fill="#7f8c8d" font-size="12">汇总评分</text>
+                    <text x="640" y="585" fill="#7f8c8d" font-size="12">通过</text>
+                    <text x="180" y="585" fill="#7f8c8d" font-size="12">不通过</text>
+                    
+                    <defs>
+                        <marker id="arrow2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <polygon points="0 0, 10 3, 0 6" fill="#2c3e50" />
+                        </marker>
+                    </defs>
+                </svg>
+                <p><strong>图4-1 项目申报流程图</strong></p>
+            </div>
+
+            <h3>4.1.1 流程说明</h3>
+            <ol>
+                <li><strong>填写申请：</strong>项目负责人登录系统，填写项目申请书，包括项目名称、研究内容、预算等信息，上传相关附件材料</li>
+                <li><strong>单位审核：</strong>科研单位管理员对本单位提交的项目进行初审，确认项目信息准确、材料齐全</li>
+                <li><strong>形式审查：</strong>主管部门对项目申请进行形式审查，检查申请材料的完整性和规范性</li>
+                <li><strong>抽取专家：</strong>系统根据项目专业领域，从专家库中随机抽取3-5名专家进行评审</li>
+                <li><strong>专家评审：</strong>专家在线查看项目材料，填写评审意见并打分</li>
+                <li><strong>立项审批：</strong>主管部门根据专家评审结果，决定是否立项</li>
+                <li><strong>结果通知：</strong>系统自动向项目负责人发送立项结果通知</li>
+            </ol>
+
+            <h2>4.2 项目执行流程</h2>
+            <div class="workflow-diagram">
+                <svg width="800" height="500" xmlns="http://www.w3.org/2000/svg">
+                    <!-- 立项 -->
+                    <rect x="50" y="50" width="120" height="60" fill="#27ae60" stroke="#229954" stroke-width="2" rx="5"/>
+                    <text x="110" y="85" text-anchor="middle" fill="white" font-weight="bold">项目立项</text>
+                    
+                    <!-- 任务书 -->
+                    <rect x="220" y="50" width="120" height="60" fill="#3498db" stroke="#2980b9" stroke-width="2" rx="5"/>
+                    <text x="280" y="85" text-anchor="middle" fill="white">编制任务书</text>
+                    
+                    <!-- 执行 -->
+                    <rect x="390" y="50" width="120" height="60" fill="#3498db" stroke="#2980b9" stroke-width="2" rx="5"/>
+                    <text x="450" y="85" text-anchor="middle" fill="white">项目执行</text>
+                    
+                    <!-- 中期检查 -->
+                    <rect x="220" y="150" width="120" height="60" fill="#9b59b6" stroke="#8e44ad" stroke-width="2" rx="5"/>
+                    <text x="280" y="185" text-anchor="middle" fill="white">中期检查</text>
+                    
+                    <!-- 年度检查 -->
+                    <rect x="390" y="150" width="120" height="60" fill="#9b59b6" stroke="#8e44ad" stroke-width="2" rx="5"/>
+                    <text x="450" y="185" text-anchor="middle" fill="white">年度检查</text>
+                    
+                    <!-- 项目变更 -->
+                    <rect x="560" y="150" width="120" height="60" fill="#f39c12" stroke="#d68910" stroke-width="2" rx="5"/>
+                    <text x="620" y="185" text-anchor="middle" fill="white">项目变更</text>
+                    
+                    <!-- 验收 -->
+                    <rect x="220" y="250" width="120" height="60" fill="#e74c3c" stroke="#c0392b" stroke-width="2" rx="5"/>
+                    <text x="280" y="285" text-anchor="middle" fill="white">项目验收</text>
+                    
+                    <!-- 结项 -->
+                    <rect x="390" y="250" width="120" height="60" fill="#27ae60" stroke="#229954" stroke-width="2" rx="5"/>
+                    <text x="450" y="285" text-anchor="middle" fill="white" font-weight="bold">项目结项</text>
+                    
+                    <!-- 成果登记 -->
+                    <rect x="560" y="250" width="120" height="60" fill="#16a085" stroke="#138d75" stroke-width="2" rx="5"/>
+                    <text x="620" y="285" text-anchor="middle" fill="white">成果登记</text>
+                    
+                    <!-- 连接线 -->
+                    <line x1="170" y1="80" x2="220" y2="80" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow3)"/>
+                    <line x1="340" y1="80" x2="390" y2="80" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow3)"/>
+                    <line x1="450" y1="110" x2="280" y2="150" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow3)"/>
+                    <line x1="450" y1="110" x2="450" y2="150" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow3)"/>
+                    <line x1="510" y1="80" x2="620" y2="150" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow3)"/>
+                    <line x1="280" y1="210" x2="280" y2="250" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow3)"/>
+                    <line x1="340" y1="280" x2="390" y2="280" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow3)"/>
+                    <line x1="510" y1="280" x2="560" y2="280" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow3)"/>
+                    
+                    <!-- 循环线 -->
+                    <path d="M 280 210 Q 150 230 150 80 L 220 80" stroke="#f39c12" stroke-width="2" fill="none" stroke-dasharray="5,5" marker-end="url(#arrow3)"/>
+                    <text x="120" y="150" fill="#f39c12" font-size="12">继续执行</text>
+                    
+                    <defs>
+                        <marker id="arrow3" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <polygon points="0 0, 10 3, 0 6" fill="#2c3e50" />
+                        </marker>
+                    </defs>
+                </svg>
+                <p><strong>图4-2 项目执行流程图</strong></p>
+            </div>
+
+            <h3>4.2.1 流程说明</h3>
+            <ol>
+                <li><strong>编制任务书：</strong>项目立项后，项目负责人编制详细的任务书，明确研究内容、技术路线、进度安排等</li>
+                <li><strong>项目执行：</strong>按照任务书要求开展研究工作，定期更新项目进度</li>
+                <li><strong>中期检查：</strong>项目执行到中期时，进行中期检查，评估项目进展情况</li>
+                <li><strong>年度检查：</strong>每年进行年度检查，总结年度工作和成果</li>
+                <li><strong>项目变更：</strong>如需变更项目内容、负责人、预算等，需提交变更申请并审批</li>
+                <li><strong>项目验收：</strong>项目完成后，组织专家进行验收评审</li>
+                <li><strong>项目结项：</strong>验收通过后，办理结项手续</li>
+                <li><strong>成果登记：</strong>登记项目产出的各类科研成果</li>
+            </ol>
+
+            <h2>4.3 专家评审流程</h2>
+            <p>专家评审是项目管理的核心环节，包括立项评审、中期评审、验收评审等多个阶段。</p>
+
+            <h3>4.3.1 专家抽取规则</h3>
+            <ul>
+                <li>根据项目专业领域，从对应专业的专家库中抽取</li>
+                <li>每个项目至少抽取3名专家，重点项目抽取5-7名专家</li>
+                <li>实行回避制度：项目承担单位的专家不能参与本单位项目评审</li>
+                <li>专家近3个月内评审同一项目负责人的项目不超过2次</li>
+                <li>优先抽取评审任务较少的专家，保证评审质量</li>
+            </ul>
+
+            <h3>4.3.2 评审打分规则</h3>
+            <ul>
+                <li>评分范围：0-100分</li>
+                <li>评分维度：创新性（30%）、可行性（30%）、重要性（20%）、团队能力（20%）</li>
+                <li>最终得分：去掉一个最高分和一个最低分后的平均分</li>
+                <li>评审结论：80分以上为优秀，60-80分为良好，60分以下为不合格</li>
+            </ul>
+
+            <div class="note">
+                <strong>业务规则说明：</strong>
+                <ul>
+                    <li>项目申请提交后不可修改，如需修改需撤回重新提交</li>
+                    <li>专家评审期限为7个工作日，逾期未提交视为弃权</li>
+                    <li>项目变更需在项目执行期内提出，每个项目最多变更3次</li>
+                    <li>中期检查不合格的项目需整改，整改后仍不合格的项目将被终止</li>
+                    <li>项目验收不通过的，可在6个月内申请复验，复验仍不通过的项目将被终止</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 第5章 界面设计 -->
+        <div id="ui-design" class="page-break">
+            <h1>5. 界面设计</h1>
+
+            <h2>5.1 界面设计原则</h2>
+            <ul>
+                <li><strong>简洁明了：</strong>界面布局清晰，操作流程简单，减少用户学习成本</li>
+                <li><strong>一致性：</strong>保持界面风格、交互方式、术语使用的一致性</li>
+                <li><strong>响应式设计：</strong>支持PC、平板、手机等多种设备访问</li>
+                <li><strong>无障碍访问：</strong>遵循WCAG 2.1标准，支持键盘导航和屏幕阅读器</li>
+                <li><strong>性能优化：</strong>页面加载时间控制在3秒以内</li>
+            </ul>
+
+            <h2>5.2 登录页面</h2>
+            <div class="screenshot">
+                <svg width="900" height="500" xmlns="http://www.w3.org/2000/svg">
+                    <!-- 背景 -->
+                    <rect width="900" height="500" fill="#f0f4f8"/>
+                    
+                    <!-- 左侧装饰 -->
+                    <rect x="0" y="0" width="400" height="500" fill="#3498db"/>
+                    <text x="200" y="200" text-anchor="middle" fill="white" font-size="32" font-weight="bold">科研项目</text>
+                    <text x="200" y="250" text-anchor="middle" fill="white" font-size="32" font-weight="bold">管理系统</text>
+                    <text x="200" y="300" text-anchor="middle" fill="white" font-size="16">Expert Review Workflow</text>
+                    
+                    <!-- 登录框 -->
+                    <rect x="480" y="100" width="360" height="300" fill="white" stroke="#dee2e6" stroke-width="1" rx="10"/>
+                    
+                    <!-- 标题 -->
+                    <text x="660" y="140" text-anchor="middle" font-size="24" font-weight="bold" fill="#2c3e50">用户登录</text>
+                    
+                    <!-- 用户名输入框 -->
+                    <rect x="520" y="170" width="280" height="40" fill="#f8f9fa" stroke="#ced4da" stroke-width="1" rx="5"/>
+                    <text x="530" y="195" font-size="14" fill="#6c757d">请输入用户名</text>
+                    
+                    <!-- 密码输入框 -->
+                    <rect x="520" y="230" width="280" height="40" fill="#f8f9fa" stroke="#ced4da" stroke-width="1" rx="5"/>
+                    <text x="530" y="255" font-size="14" fill="#6c757d">请输入密码</text>
+                    
+                    <!-- 记住密码和忘记密码 -->
+                    <text x="520" y="295" font-size="12" fill="#6c757d">☑ 记住密码</text>
+                    <text x="750" y="295" text-anchor="end" font-size="12" fill="#3498db">忘记密码？</text>
+                    
+                    <!-- 登录按钮 -->
+                    <rect x="520" y="310" width="280" height="40" fill="#3498db" rx="5"/>
+                    <text x="660" y="335" text-anchor="middle" font-size="16" fill="white" font-weight="bold">登 录</text>
+                    
+                    <!-- 注册链接 -->
+                    <text x="660" y="375" text-anchor="middle" font-size="12" fill="#6c757d">还没有账号？<tspan fill="#3498db">立即注册</tspan></text>
+                </svg>
+                <p><strong>图5-1 登录页面设计</strong></p>
+            </div>
+
+            <h3>5.2.1 功能说明</h3>
+            <ul>
+                <li>支持用户名密码登录和手机验证码登录两种方式</li>
+                <li>提供"记住密码"功能，下次登录自动填充</li>
+                <li>提供"忘记密码"功能，通过手机验证码重置密码</li>
+                <li>新用户可点击"立即注册"进行账号注册</li>
+            </ul>
+
+            <h2>5.3 系统首页（Dashboard）</h2>
+            <div class="screenshot">
+                <svg width="900" height="600" xmlns="http://www.w3.org/2000/svg">
+                    <!-- 顶部导航栏 -->
+                    <rect x="0" y="0" width="900" height="60" fill="#2c3e50"/>
+                    <text x="30" y="38" font-size="20" fill="white" font-weight="bold">科研项目管理系统</text>
+                    <text x="820" y="38" text-anchor="end" font-size="14" fill="white">管理员 ▼</text>
+                    
+                    <!-- 左侧菜单 -->
+                    <rect x="0" y="60" width="200" height="540" fill="#34495e"/>
+                    <text x="20" y="95" font-size="14" fill="white">📊 工作台</text>
+                    <text x="20" y="130" font-size="14" fill="#95a5a6">📁 项目管理</text>
+                    <text x="20" y="165" font-size="14" fill="#95a5a6">👥 专家管理</text>
+                    <text x="20" y="200" font-size="14" fill="#95a5a6">📝 评审管理</text>
+                    <text x="20" y="235" font-size="14" fill="#95a5a6">🏆 成果管理</text>
+                    <text x="20" y="270" font-size="14" fill="#95a5a6">📚 资源共享</text>
+                    <text x="20" y="305" font-size="14" fill="#95a5a6">⚙️ 系统管理</text>
+                    
+                    <!-- 主内容区 -->
+                    <rect x="200" y="60" width="700" height="540" fill="#ecf0f1"/>
+                    
+                    <!-- 面包屑 -->
+                    <text x="220" y="90" font-size="14" fill="#7f8c8d">首页 / 工作台</text>
+                    
+                    <!-- 统计卡片 -->
+                    <rect x="220" y="110" width="150" height="100" fill="white" stroke="#dee2e6" stroke-width="1" rx="5"/>
+                    <text x="295" y="140" text-anchor="middle" font-size="14" fill="#7f8c8d">项目总数</text>
+                    <text x="295" y="175" text-anchor="middle" font-size="32" fill="#3498db" font-weight="bold">156</text>
+                    
+                    <rect x="390" y="110" width="150" height="100" fill="white" stroke="#dee2e6" stroke-width="1" rx="5"/>
+                    <text x="465" y="140" text-anchor="middle" font-size="14" fill="#7f8c8d">执行中项目</text>
+                    <text x="465" y="175" text-anchor="middle" font-size="32" fill="#27ae60" font-weight="bold">89</text>
+                    
+                    <rect x="560" y="110" width="150" height="100" fill="white" stroke="#dee2e6" stroke-width="1" rx="5"/>
+                    <text x="635" y="140" text-anchor="middle" font-size="14" fill="#7f8c8d">待审批</text>
+                    <text x="635" y="175" text-anchor="middle" font-size="32" fill="#e74c3c" font-weight="bold">12</text>
+                    
+                    <rect x="730" y="110" width="150" height="100" fill="white" stroke="#dee2e6" stroke-width="1" rx="5"/>
+                    <text x="805" y="140" text-anchor="middle" font-size="14" fill="#7f8c8d">专家总数</text>
+                    <text x="805" y="175" text-anchor="middle" font-size="32" fill="#9b59b6" font-weight="bold">328</text>
+                    
+                    <!-- 图表区域 -->
+                    <rect x="220" y="230" width="320" height="250" fill="white" stroke="#dee2e6" stroke-width="1" rx="5"/>
+                    <text x="240" y="255" font-size="16" fill="#2c3e50" font-weight="bold">项目类型分布</text>
+                    <circle cx="380" cy="360" r="80" fill="#3498db" opacity="0.3"/>
+                    <text x="380" y="365" text-anchor="middle" fill="#2c3e50">饼图</text>
+                    
+                    <rect x="560" y="230" width="320" height="250" fill="white" stroke="#dee2e6" stroke-width="1" rx="5"/>
+                    <text x="580" y="255" font-size="16" fill="#2c3e50" font-weight="bold">项目进度趋势</text>
+                    <line x1="580" y1="450" x2="860" y2="450" stroke="#dee2e6" stroke-width="1"/>
+                    <polyline points="580,420 640,380 700,400 760,350 820,370" fill="none" stroke="#3498db" stroke-width="2"/>
+                    <text x="720" y="365" text-anchor="middle" fill="#2c3e50">折线图</text>
+                    
+                    <!-- 待办事项 -->
+                    <rect x="220" y="500" width="660" height="80" fill="white" stroke="#dee2e6" stroke-width="1" rx="5"/>
+                    <text x="240" y="525" font-size="16" fill="#2c3e50" font-weight="bold">待办事项</text>
+                    <text x="240" y="550" font-size="14" fill="#7f8c8d">• 项目"人工智能研究"待审批</text>
+                    <text x="240" y="570" font-size="14" fill="#7f8c8d">• 专家评审任务3个待完成</text>
+                </svg>
+                <p><strong>图5-2 系统首页设计</strong></p>
+            </div>
+
+            <h3>5.3.1 功能说明</h3>
+            <ul>
+                <li><strong>统计卡片：</strong>展示项目总数、执行中项目、待审批项目、专家总数等关键指标</li>
+                <li><strong>图表展示：</strong>通过饼图、柱状图、折线图等可视化方式展示项目分布和趋势</li>
+                <li><strong>待办事项：</strong>显示当前用户需要处理的待办任务</li>
+                <li><strong>快捷入口：</strong>提供常用功能的快捷访问入口</li>
+            </ul>
+
+            <h2>5.4 项目列表页面</h2>
+            <div class="screenshot">
+                <svg width="900" height="600" xmlns="http://www.w3.org/2000/svg">
+                    <!-- 顶部导航栏 -->
+                    <rect x="0" y="0" width="900" height="60" fill="#2c3e50"/>
+                    <text x="30" y="38" font-size="20" fill="white" font-weight="bold">科研项目管理系统</text>
+                    
+                    <!-- 左侧菜单 -->
+                    <rect x="0" y="60" width="200" height="540" fill="#34495e"/>
+                    <text x="20" y="95" font-size="14" fill="#95a5a6">📊 工作台</text>
+                    <text x="20" y="130" font-size="14" fill="white">📁 项目管理</text>
+                    
+                    <!-- 主内容区 -->
+                    <rect x="200" y="60" width="700" height="540" fill="#ecf0f1"/>
+                    
+                    <!-- 面包屑 -->
+                    <text x="220" y="90" font-size="14" fill="#7f8c8d">首页 / 项目管理 / 项目列表</text>
+                    
+                    <!-- 搜索和操作栏 -->
+                    <rect x="220" y="110" width="200" height="35" fill="white" stroke="#ced4da" stroke-width="1" rx="5"/>
+                    <text x="230" y="133" font-size="14" fill="#6c757d">🔍 搜索项目名称/编号</text>
+                    
+                    <rect x="440" y="110" width="100" height="35" fill="white" stroke="#ced4da" stroke-width="1" rx="5"/>
+                    <text x="490" y="133" text-anchor="middle" font-size="14" fill="#6c757d">项目状态 ▼</text>
+                    
+                    <rect x="560" y="110" width="100" height="35" fill="white" stroke="#ced4da" stroke-width="1" rx="5"/>
+                    <text x="610" y="133" text-anchor="middle" font-size="14" fill="#6c757d">项目类型 ▼</text>
+                    
+                    <rect x="780" y="110" width="100" height="35" fill="#3498db" rx="5"/>
+                    <text x="830" y="133" text-anchor="middle" font-size="14" fill="white" font-weight="bold">+ 新建项目</text>
+                    
+                    <!-- 表格 -->
+                    <rect x="220" y="165" width="660" height="400" fill="white" stroke="#dee2e6" stroke-width="1" rx="5"/>
+                    
+                    <!-- 表头 -->
+                    <rect x="220" y="165" width="660" height="40" fill="#f8f9fa" rx="5"/>
+                    <text x="240" y="190" font-size="14" fill="#2c3e50" font-weight="bold">项目编号</text>
+                    <text x="360" y="190" font-size="14" fill="#2c3e50" font-weight="bold">项目名称</text>
+                    <text x="540" y="190" font-size="14" fill="#2c3e50" font-weight="bold">负责人</text>
+                    <text x="640" y="190" font-size="14" fill="#2c3e50" font-weight="bold">状态</text>
+                    <text x="760" y="190" font-size="14" fill="#2c3e50" font-weight="bold">操作</text>
+                    
+                    <!-- 表格行 -->
+                    <line x1="220" y1="205" x2="880" y2="205" stroke="#dee2e6" stroke-width="1"/>
+                    <text x="240" y="230" font-size="13" fill="#495057">2024-01-001</text>
+                    <text x="360" y="230" font-size="13" fill="#495057">人工智能技术研究</text>
+                    <text x="540" y="230" font-size="13" fill="#495057">张三</text>
+                    <rect x="640" y="215" width="60" height="20" fill="#d4edda" rx="3"/>
+                    <text x="670" y="229" text-anchor="middle" font-size="12" fill="#155724">执行中</text>
+                    <text x="760" y="230" font-size="13" fill="#3498db">查看 编辑</text>
+                    
+                    <line x1="220" y1="245" x2="880" y2="245" stroke="#dee2e6" stroke-width="1"/>
+                    <text x="240" y="270" font-size="13" fill="#495057">2024-01-002</text>
+                    <text x="360" y="270" font-size="13" fill="#495057">大数据分析平台</text>
+                    <text x="540" y="270" font-size="13" fill="#495057">李四</text>
+                    <rect x="640" y="255" width="60" height="20" fill="#fff3cd" rx="3"/>
+                    <text x="670" y="269" text-anchor="middle" font-size="12" fill="#856404">待审批</text>
+                    <text x="760" y="270" font-size="13" fill="#3498db">查看 审批</text>
+                    
+                    <line x1="220" y1="285" x2="880" y2="285" stroke="#dee2e6" stroke-width="1"/>
+                    <text x="240" y="310" font-size="13" fill="#495057">2024-01-003</text>
+                    <text x="360" y="310" font-size="13" fill="#495057">区块链应用研究</text>
+                    <text x="540" y="310" font-size="13" fill="#495057">王五</text>
+                    <rect x="640" y="295" width="60" height="20" fill="#cce5ff" rx="3"/>
+                    <text x="670" y="309" text-anchor="middle" font-size="12" fill="#004085">评审中</text>
+                    <text x="760" y="310" font-size="13" fill="#3498db">查看</text>
+                    
+                    <!-- 分页 -->
+                    <text x="240" y="555" font-size="13" fill="#6c757d">共 156 条记录</text>
+                    <rect x="720" y="540" width="30" height="25" fill="white" stroke="#dee2e6" stroke-width="1" rx="3"/>
+                    <text x="735" y="557" text-anchor="middle" font-size="13" fill="#495057">1</text>
+                    <rect x="755" y="540" width="30" height="25" fill="#3498db" rx="3"/>
+                    <text x="770" y="557" text-anchor="middle" font-size="13" fill="white">2</text>
+                    <rect x="790" y="540" width="30" height="25" fill="white" stroke="#dee2e6" stroke-width="1" rx="3"/>
+                    <text x="805" y="557" text-anchor="middle" font-size="13" fill="#495057">3</text>
+                    <rect x="825" y="540" width="40" height="25" fill="white" stroke="#dee2e6" stroke-width="1" rx="3"/>
+                    <text x="845" y="557" text-anchor="middle" font-size="13" fill="#495057">下一页</text>
+                </svg>
+                <p><strong>图5-3 项目列表页面设计</strong></p>
+            </div>
+
+            <h3>5.4.1 功能说明</h3>
+            <ul>
+                <li><strong>搜索筛选：</strong>支持按项目名称、编号、状态、类型等条件搜索和筛选</li>
+                <li><strong>列表展示：</strong>以表格形式展示项目列表，包括项目编号、名称、负责人、状态等信息</li>
+                <li><strong>状态标识：</strong>使用不同颜色标识项目状态，便于快速识别</li>
+                <li><strong>操作按钮：</strong>提供查看、编辑、审批等操作按钮</li>
+                <li><strong>分页功能：</strong>支持分页浏览，每页显示10-50条记录可配置</li>
+            </ul>
+
+            <h2>5.5 项目详情页面</h2>
+            <div class="screenshot">
+                <svg width="900" height="700" xmlns="http://www.w3.org/2000/svg">
+                    <!-- 顶部导航栏 -->
+                    <rect x="0" y="0" width="900" height="60" fill="#2c3e50"/>
+                    <text x="30" y="38" font-size="20" fill="white" font-weight="bold">科研项目管理系统</text>
+                    
+                    <!-- 左侧菜单 -->
+                    <rect x="0" y="60" width="200" height="640" fill="#34495e"/>
+                    
+                    <!-- 主内容区 -->
+                    <rect x="200" y="60" width="700" height="640" fill="#ecf0f1"/>
+                    
+                    <!-- 面包屑 -->
+                    <text x="220" y="90" font-size="14" fill="#7f8c8d">首页 / 项目管理 / 项目详情</text>
+                    
+                    <!-- 项目标题栏 -->
+                    <rect x="220" y="110" width="660" height="60" fill="white" stroke="#dee2e6" stroke-width="1" rx="5"/>
+                    <text x="240" y="135" font-size="18" fill="#2c3e50" font-weight="bold">人工智能技术研究</text>
+                    <text x="240" y="155" font-size="13" fill="#6c757d">项目编号：2024-01-001</text>
+                    <rect x="780" y="125" width="80" height="30" fill="#d4edda" rx="5"/>
+                    <text x="820" y="145" text-anchor="middle" font-size="14" fill="#155724" font-weight="bold">执行中</text>
+                    
+                    <!-- Tab标签 -->
+                    <rect x="220" y="190" width="660" height="40" fill="white" stroke="#dee2e6" stroke-width="1" rx="5"/>
+                    <rect x="230" y="200" width="100" height="30" fill="#3498db" rx="3"/>
+                    <text x="280" y="220" text-anchor="middle" font-size="14" fill="white" font-weight="bold">基本信息</text>
+                    <text x="360" y="220" font-size="14" fill="#6c757d">研究内容</text>
+                    <text x="460" y="220" font-size="14" fill="#6c757d">项目团队</text>
+                    <text x="560" y="220" font-size="14" fill="#6c757d">预算信息</text>
+                    <text x="660" y="220" font-size="14" fill="#6c757d">附件材料</text>
+                    <text x="760" y="220" font-size="14" fill="#6c757d">审批记录</text>
+                    
+                    <!-- 内容区域 -->
+                    <rect x="220" y="250" width="660" height="400" fill="white" stroke="#dee2e6" stroke-width="1" rx="5"/>
+                    
+                    <!-- 基本信息 -->
+                    <text x="240" y="280" font-size="14" fill="#6c757d">项目类型：</text>
+                    <text x="340" y="280" font-size="14" fill="#2c3e50">重点项目</text>
+                    
+                    <text x="240" y="310" font-size="14" fill="#6c757d">承担单位：</text>
+                    <text x="340" y="310" font-size="14" fill="#2c3e50">科技大学</text>
+                    
+                    <text x="240" y="340" font-size="14" fill="#6c757d">项目负责人：</text>
+                    <text x="340" y="340" font-size="14" fill="#2c3e50">张三</text>
+                    
+                    <text x="240" y="370" font-size="14" fill="#6c757d">联系电话：</text>
+                    <text x="340" y="370" font-size="14" fill="#2c3e50">13800138000</text>
+                    
+                    <text x="240" y="400" font-size="14" fill="#6c757d">项目周期：</text>
+                    <text x="340" y="400" font-size="14" fill="#2c3e50">2024-01-01 至 2026-12-31</text>
+                    
+                    <text x="240" y="430" font-size="14" fill="#6c757d">总预算：</text>
+                    <text x="340" y="430" font-size="14" fill="#2c3e50">50.00 万元</text>
+                    
+                    <text x="240" y="460" font-size="14" fill="#6c757d">立项时间：</text>
+                    <text x="340" y="460" font-size="14" fill="#2c3e50">2024-01-15</text>
+                    
+                    <text x="240" y="490" font-size="14" fill="#6c757d">研究目标：</text>
+                    <text x="240" y="515" font-size="13" fill="#495057">研究人工智能在医疗诊断领域的应用，开发智能诊断系统，</text>
+                    <text x="240" y="535" font-size="13" fill="#495057">提高疾病诊断的准确率和效率...</text>
+                    
+                    <!-- 操作按钮 -->
+                    <rect x="240" y="600" width="100" height="35" fill="#3498db" rx="5"/>
+                    <text x="290" y="623" text-anchor="middle" font-size="14" fill="white" font-weight="bold">编辑项目</text>
+                    
+                    <rect x="360" y="600" width="100" height="35" fill="white" stroke="#3498db" stroke-width="1" rx="5"/>
+                    <text x="410" y="623" text-anchor="middle" font-size="14" fill="#3498db" font-weight="bold">项目变更</text>
+                    
+                    <rect x="480" y="600" width="100" height="35" fill="white" stroke="#27ae60" stroke-width="1" rx="5"/>
+                    <text x="530" y="623" text-anchor="middle" font-size="14" fill="#27ae60" font-weight="bold">提交验收</text>
+                    
+                    <rect x="600" y="600" width="100" height="35" fill="white" stroke="#6c757d" stroke-width="1" rx="5"/>
+                    <text x="650" y="623" text-anchor="middle" font-size="14" fill="#6c757d">导出PDF</text>
+                </svg>
+                <p><strong>图5-4 项目详情页面设计</strong></p>
+            </div>
+
+            <h3>5.5.1 功能说明</h3>
+            <ul>
+                <li><strong>Tab切换：</strong>通过Tab标签切换查看不同类型的信息</li>
+                <li><strong>基本信息：</strong>展示项目的基本信息，包括项目类型、承担单位、负责人等</li>
+                <li><strong>研究内容：</strong>展示项目的研究内容、技术路线、预期成果等</li>
+                <li><strong>项目团队：</strong>展示项目组成员信息</li>
+                <li><strong>预算信息：</strong>展示项目预算明细和经费使用情况</li>
+                <li><strong>附件材料：</strong>展示项目相关的附件文件，支持在线预览和下载</li>
+                <li><strong>审批记录：</strong>展示项目的审批流程和审批意见</li>
+                <li><strong>操作按钮：</strong>根据项目状态和用户权限，显示相应的操作按钮</li>
+            </ul>
+
+            <h2>5.6 专家评审页面</h2>
+            <div class="screenshot">
+                <svg width="900" height="700" xmlns="http://www.w3.org/2000/svg">
+                    <!-- 顶部导航栏 -->
+                    <rect x="0" y="0" width="900" height="60" fill="#2c3e50"/>
+                    <text x="30" y="38" font-size="20" fill="white" font-weight="bold">科研项目管理系统 - 专家评审</text>
+                    
+                    <!-- 主内容区 -->
+                    <rect x="50" y="80" width="800" height="600" fill="white" stroke="#dee2e6" stroke-width="1" rx="10"/>
+                    
+                    <!-- 标题 -->
+                    <text x="450" y="120" text-anchor="middle" font-size="22" fill="#2c3e50" font-weight="bold">项目评审表</text>
+                    <text x="450" y="145" text-anchor="middle" font-size="14" fill="#6c757d">项目名称：人工智能技术研究</text>
+                    
+                    <!-- 评分项 -->
+                    <rect x="80" y="170" width="740" height="350" fill="#f8f9fa" stroke="#dee2e6" stroke-width="1" rx="5"/>
+                    
+                    <text x="100" y="200" font-size="15" fill="#2c3e50" font-weight="bold">一、创新性评分（30分）</text>
+                    <text x="100" y="225" font-size="13" fill="#6c757d">请评价项目的创新性和先进性</text>
+                    <rect x="100" y="235" width="700" height="35" fill="white" stroke="#ced4da" stroke-width="1" rx="5"/>
+                    <text x="120" y="258" font-size="14" fill="#495057">评分：</text>
+                    <rect x="180" y="240" width="80" height="25" fill="white" stroke="#3498db" stroke-width="1" rx="3"/>
+                    <text x="220" y="258" text-anchor="middle" font-size="14" fill="#495057">28</text>
+                    <text x="280" y="258" font-size="13" fill="#6c757d">/ 30分</text>
+                    
+                    <text x="100" y="300" font-size="15" fill="#2c3e50" font-weight="bold">二、可行性评分（30分）</text>
+                    <text x="100" y="325" font-size="13" fill="#6c757d">请评价项目的技术可行性和实施方案</text>
+                    <rect x="100" y="335" width="700" height="35" fill="white" stroke="#ced4da" stroke-width="1" rx="5"/>
+                    <text x="120" y="358" font-size="14" fill="#495057">评分：</text>
+                    <rect x="180" y="340" width="80" height="25" fill="white" stroke="#3498db" stroke-width="1" rx="3"/>
+                    <text x="220" y="358" text-anchor="middle" font-size="14" fill="#495057">26</text>
+                    <text x="280" y="358" font-size="13" fill="#6c757d">/ 30分</text>
+                    
+                    <text x="100" y="400" font-size="15" fill="#2c3e50" font-weight="bold">三、重要性评分（20分）</text>
+                    <text x="100" y="425" font-size="13" fill="#6c757d">请评价项目的应用价值和社会效益</text>
+                    <rect x="100" y="435" width="700" height="35" fill="white" stroke="#ced4da" stroke-width="1" rx="5"/>
+                    <text x="120" y="458" font-size="14" fill="#495057">评分：</text>
+                    <rect x="180" y="440" width="80" height="25" fill="white" stroke="#3498db" stroke-width="1" rx="3"/>
+                    <text x="220" y="458" text-anchor="middle" font-size="14" fill="#495057">18</text>
+                    <text x="280" y="458" font-size="13" fill="#6c757d">/ 20分</text>
+                    
+                    <text x="100" y="500" font-size="15" fill="#2c3e50" font-weight="bold">四、团队能力评分（20分）</text>
+                    <rect x="100" y="510" width="700" height="35" fill="white" stroke="#ced4da" stroke-width="1" rx="5"/>
+                    <text x="120" y="533" font-size="14" fill="#495057">评分：</text>
+                    <rect x="180" y="515" width="80" height="25" fill="white" stroke="#3498db" stroke-width="1" rx="3"/>
+                    <text x="220" y="533" text-anchor="middle" font-size="14" fill="#495057">17</text>
+                    <text x="280" y="533" font-size="13" fill="#6c757d">/ 20分</text>
+                    
+                    <!-- 总分 -->
+                    <rect x="600" y="170" width="200" height="80" fill="#e8f6f3" stroke="#1abc9c" stroke-width="2" rx="5"/>
+                    <text x="700" y="200" text-anchor="middle" font-size="14" fill="#16a085">总分</text>
+                    <text x="700" y="235" text-anchor="middle" font-size="36" fill="#16a085" font-weight="bold">89</text>
+                    
+                    <!-- 评审意见 -->
+                    <text x="80" y="560" font-size="15" fill="#2c3e50" font-weight="bold">评审意见：</text>
+                    <rect x="80" y="570" width="740" height="80" fill="white" stroke="#ced4da" stroke-width="1" rx="5"/>
+                    <text x="100" y="595" font-size="13" fill="#6c757d">该项目研究方向明确，技术路线合理，具有较好的创新性和应用前景。</text>
+                    <text x="100" y="615" font-size="13" fill="#6c757d">建议加强与医疗机构的合作，确保研究成果的实际应用...</text>
+                    
+                    <!-- 评审结论 -->
+                    <text x="80" y="675" font-size="15" fill="#2c3e50" font-weight="bold">评审结论：</text>
+                    <rect x="180" y="660" width="80" height="30" fill="#d4edda" stroke="#28a745" stroke-width="1" rx="5"/>
+                    <text x="220" y="681" text-anchor="middle" font-size="14" fill="#155724" font-weight="bold">通过</text>
+                    
+                    <rect x="280" y="660" width="100" height="30" fill="white" stroke="#6c757d" stroke-width="1" rx="5"/>
+                    <text x="330" y="681" text-anchor="middle" font-size="14" fill="#6c757d">修改后通过</text>
+                    
+                    <rect x="400" y="660" width="80" height="30" fill="white" stroke="#6c757d" stroke-width="1" rx="5"/>
+                    <text x="440" y="681" text-anchor="middle" font-size="14" fill="#6c757d">不通过</text>
+                    
+                    <!-- 提交按钮 -->
+                    <rect x="650" y="660" width="150" height="35" fill="#3498db" rx="5"/>
+                    <text x="725" y="683" text-anchor="middle" font-size="16" fill="white" font-weight="bold">提交评审</text>
+                </svg>
+                <p><strong>图5-5 专家评审页面设计</strong></p>
+            </div>
+
+            <h3>5.6.1 功能说明</h3>
+            <ul>
+                <li><strong>分项评分：</strong>按创新性、可行性、重要性、团队能力等维度分别打分</li>
+                <li><strong>总分计算：</strong>自动计算总分并实时显示</li>
+                <li><strong>评审意见：</strong>专家填写详细的评审意见和建议</li>
+                <li><strong>评审结论：</strong>选择通过、修改后通过或不通过</li>
+                <li><strong>提交评审：</strong>提交后不可修改，确保评审的严肃性</li>
+            </ul>
+
+            <div class="note">
+                <strong>界面设计规范：</strong>
+                <ul>
+                    <li>主色调：#3498db（蓝色），辅助色：#27ae60（绿色）、#e74c3c（红色）</li>
+                    <li>字体：标题使用16-24px，正文使用13-14px，说明文字使用12px</li>
+                    <li>间距：模块间距20-30px，元素间距10-15px</li>
+                    <li>圆角：卡片和按钮使用5px圆角，输入框使用3px圆角</li>
+                    <li>阴影：卡片使用轻微阴影增强层次感</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 第6章 核心算法设计 -->
+        <div id="algorithm" class="page-break">
+            <h1>6. 核心算法设计</h1>
+
+            <h2>6.1 专家抽取算法</h2>
+            <p>专家抽取是评审系统的核心功能，需要确保抽取的公平性、随机性和合理性。</p>
+
+            <h3>6.1.1 算法流程</h3>
+            <pre>
+输入：项目ID、专业领域、需要抽取的专家数量N
+输出：抽取的专家ID列表
+
+1. 根据项目专业领域，查询符合条件的专家列表
+2. 过滤回避专家：
+   - 排除项目承担单位的专家
+   - 排除近3个月评审过该项目负责人项目的专家
+   - 排除用户指定的回避专家
+3. 按评审任务数量排序，优先选择任务少的专家
+4. 从候选专家中随机抽取N名专家
+5. 记录抽取日志，包括抽取时间、抽取规则、候选专家等
+6. 返回抽取结果
+            </pre>
+
+            <h3>6.1.2 伪代码实现</h3>
+            <pre>
+function drawExperts(projectId, field, count) {
+    // 1. 获取项目信息
+    project = getProjectById(projectId);
+    institutionId = project.institutionId;
+    leaderId = project.leaderId;
+    
+    // 2. 查询符合专业领域的专家
+    candidates = queryExpertsByField(field);
+    
+    // 3. 过滤回避专家
+    filtered = [];
+    for (expert in candidates) {
+        // 排除本单位专家
+        if (expert.institutionId == institutionId) continue;
+        
+        // 排除近期评审过该负责人项目的专家
+        recentReviews = getRecentReviews(expert.id, leaderId, 90);
+        if (recentReviews.count >= 2) continue;
+        
+        // 排除指定回避专家
+        if (isInAvoidList(expert.id, projectId)) continue;
+        
+        filtered.add(expert);
+    }
+    
+    // 4. 按评审任务数量排序
+    filtered.sortBy(expert => expert.currentTaskCount);
+    
+    // 5. 随机抽取
+    selected = [];
+    while (selected.length < count && filtered.length > 0) {
+        index = random(0, filtered.length - 1);
+        selected.add(filtered[index]);
+        filtered.remove(index);
+    }
+    
+    // 6. 记录日志
+    logDrawResult(projectId, selected, filtered);
+    
+    return selected;
+}
+            </pre>
+
+            <h2>6.2 评审得分计算算法</h2>
+            <p>评审得分需要综合多位专家的评分，采用去极值平均法计算最终得分。</p>
+
+            <h3>6.2.1 算法流程</h3>
+            <pre>
+输入：专家评分列表 scores = [score1, score2, ..., scoreN]
+输出：最终得分
+
+1. 如果专家数量 < 3，直接返回平均分
+2. 如果专家数量 >= 3：
+   - 去掉一个最高分
+   - 去掉一个最低分
+   - 计算剩余分数的平均值
+3. 保留两位小数
+4. 返回最终得分
+            </pre>
+
+            <h3>6.2.2 伪代码实现</h3>
+            <pre>
+function calculateFinalScore(scores) {
+    if (scores.length == 0) return 0;
+    if (scores.length < 3) {
+        return average(scores);
+    }
+    
+    // 排序
+    scores.sort();
+    
+    // 去掉最高分和最低分
+    scores.removeFirst();
+    scores.removeLast();
+    
+    // 计算平均分
+    sum = 0;
+    for (score in scores) {
+        sum += score;
+    }
+    finalScore = sum / scores.length;
+    
+    // 保留两位小数
+    return round(finalScore, 2);
+}
+            </pre>
+
+            <h2>6.3 项目推荐算法</h2>
+            <p>根据用户的研究方向和历史行为，推荐相关的项目信息。</p>
+
+            <h3>6.3.1 算法流程</h3>
+            <pre>
+输入：用户ID
+输出：推荐项目列表
+
+1. 获取用户的研究方向和兴趣标签
+2. 获取用户历史浏览和收藏的项目
+3. 基于内容的推荐：
+   - 查询与用户研究方向相关的项目
+   - 计算项目与用户兴趣的相似度
+4. 基于协同过滤的推荐：
+   - 找到与该用户兴趣相似的其他用户
+   - 推荐这些用户关注的项目
+5. 合并推荐结果，去重排序
+6. 返回Top 10推荐项目
+            </pre>
+
+            <h3>6.3.2 相似度计算</h3>
+            <p>使用余弦相似度计算项目与用户兴趣的匹配程度：</p>
+            <pre>
+similarity(A, B) = (A · B) / (||A|| × ||B||)
+
+其中：
+- A 为用户兴趣向量
+- B 为项目特征向量
+- A · B 为向量点积
+- ||A|| 和 ||B|| 为向量的模
+            </pre>
+
+            <h2>6.4 项目进度预警算法</h2>
+            <p>根据项目的计划进度和实际进度，预测项目风险并发出预警。</p>
+
+            <h3>6.4.1 算法流程</h3>
+            <pre>
+输入：项目ID
+输出：预警级别（正常、提醒、警告、严重）
+
+1. 获取项目的计划进度和实际进度
+2. 计算进度偏差率 = (计划进度 - 实际进度) / 计划进度
+3. 计算剩余时间占比 = 剩余天数 / 总天数
+4. 根据偏差率和剩余时间判断预警级别：
+   - 偏差率 < 10% 且剩余时间 > 30%：正常
+   - 偏差率 10%-20% 或剩余时间 20%-30%：提醒
+   - 偏差率 20%-30% 或剩余时间 10%-20%：警告
+   - 偏差率 > 30% 或剩余时间 < 10%：严重
+5. 生成预警消息并通知相关人员
+6. 返回预警级别
+            </pre>
+
+            <h3>6.4.2 伪代码实现</h3>
+            <pre>
+function checkProjectProgress(projectId) {
+    project = getProjectById(projectId);
+    
+    // 计算进度偏差
+    plannedProgress = project.plannedProgress;
+    actualProgress = project.actualProgress;
+    deviation = (plannedProgress - actualProgress) / plannedProgress;
+    
+    // 计算剩余时间占比
+    totalDays = daysBetween(project.startDate, project.endDate);
+    remainingDays = daysBetween(today(), project.endDate);
+    remainingRatio = remainingDays / totalDays;
+    
+    // 判断预警级别
+    if (deviation < 0.1 && remainingRatio > 0.3) {
+        return "NORMAL";
+    } else if (deviation < 0.2 || remainingRatio > 0.2) {
+        sendNotification(project.leaderId, "项目进度提醒");
+        return "REMIND";
+    } else if (deviation < 0.3 || remainingRatio > 0.1) {
+        sendNotification(project.leaderId, "项目进度警告");
+        return "WARNING";
+    } else {
+        sendNotification(project.leaderId, "项目进度严重滞后");
+        sendNotification(supervisorId, "项目进度严重滞后");
+        return "CRITICAL";
+    }
+}
+            </pre>
+
+            <h2>6.5 数据统计算法</h2>
+            <p>系统需要提供多维度的数据统计和分析功能。</p>
+
+            <h3>6.5.1 项目统计维度</h3>
+            <ul>
+                <li>按项目类型统计：重点项目、一般项目、青年项目等</li>
+                <li>按项目状态统计：申报中、评审中、执行中、已完成等</li>
+                <li>按承担单位统计：各单位承担的项目数量和经费</li>
+                <li>按年度统计：每年立项数量、完成数量、经费投入等</li>
+                <li>按专业领域统计：各领域项目分布情况</li>
+            </ul>
+
+            <h3>6.5.2 成果统计维度</h3>
+            <ul>
+                <li>按成果类型统计：论文、专利、软著、获奖等</li>
+                <li>按影响因子统计：高水平论文数量</li>
+                <li>按转化情况统计：成果转化率、经济效益等</li>
+            </ul>
+
+            <div class="note">
+                <strong>算法优化建议：</strong>
+                <ul>
+                    <li>专家抽取算法可引入机器学习，根据历史评审质量优化抽取策略</li>
+                    <li>项目推荐算法可结合深度学习模型，提高推荐准确率</li>
+                    <li>进度预警算法可引入时间序列分析，提前预测项目风险</li>
+                    <li>统计分析可使用OLAP技术，提高大数据量下的查询性能</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 文档结束 -->
+        <div style="margin-top:60px; padding-top:30px; border-top:2px solid #e8f6f3; text-align:center; color:#7f8c8d;">
+            <p>— 文档结束 —</p>
+            <p style="margin-top:10px; font-size:12px;">科研项目管理系统详细设计说明书 V1.0</p>
+        </div>
+    </div>
+</body>
+</html>

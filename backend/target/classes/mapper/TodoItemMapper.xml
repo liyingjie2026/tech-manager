@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.research.project.mapper.TodoItemMapper">
+
+    <resultMap id="BaseResultMap" type="com.research.project.entity.TodoItem">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="user_name" property="userName"/>
+        <result column="role" property="role"/>
+        <result column="title" property="title"/>
+        <result column="description" property="description"/>
+        <result column="type" property="type"/>
+        <result column="business_id" property="businessId"/>
+        <result column="business_no" property="businessNo"/>
+        <result column="business_type" property="businessType"/>
+        <result column="priority" property="priority"/>
+        <result column="status" property="status"/>
+        <result column="deadline" property="deadline"/>
+        <result column="link_url" property="linkUrl"/>
+        <result column="completed_time" property="completedTime"/>
+        <result column="completed_by" property="completedBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <select id="selectByConditions" resultMap="BaseResultMap">
+        SELECT * FROM sys_todo_item
+        <where>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="role != null and role != ''">
+                AND role = #{role}
+            </if>
+            <if test="type != null and type != ''">
+                AND type = #{type}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (title LIKE CONCAT('%', #{keyword}, '%')
+                OR business_no LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="startTime != null">
+                AND create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND create_time &lt;= #{endTime}
+            </if>
+        </where>
+        ORDER BY 
+            CASE priority
+                WHEN 'urgent' THEN 1
+                WHEN 'high' THEN 2
+                WHEN 'normal' THEN 3
+                WHEN 'low' THEN 4
+            END,
+            deadline ASC,
+            create_time DESC
+        <if test="offset != null and size != null">
+            LIMIT #{offset}, #{size}
+        </if>
+    </select>
+
+    <select id="countByConditions" resultType="long">
+        SELECT COUNT(*) FROM sys_todo_item
+        <where>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="role != null and role != ''">
+                AND role = #{role}
+            </if>
+            <if test="type != null and type != ''">
+                AND type = #{type}
+            </if>
+            <if test="status != null and status != ''">
+                AND status = #{status}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (title LIKE CONCAT('%', #{keyword}, '%')
+                OR business_no LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="startTime != null">
+                AND create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND create_time &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByBusiness" resultMap="BaseResultMap">
+        SELECT * FROM sys_todo_item
+        WHERE business_id = #{businessId}
+        AND business_type = #{businessType}
+        ORDER BY create_time DESC
+    </select>
+
+    <update id="batchCompleteByBusiness">
+        UPDATE sys_todo_item
+        SET status = 'completed',
+            completed_by = #{completedBy},
+            completed_time = #{completedTime}
+        WHERE business_id = #{businessId}
+        AND business_type = #{businessType}
+        AND status IN ('pending', 'processing')
+    </update>
+
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.research.project.mapper.DictionaryMapper">
+    
+    <!-- Fixed column mapping to match actual database schema -->
+    <resultMap id="BaseResultMap" type="com.research.project.entity.Dictionary">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="dict_type" property="dictType"/>
+        <result column="dict_name" property="dictName"/>
+        <result column="item_code" property="itemCode"/>
+        <result column="item_label" property="itemLabel"/>
+        <result column="item_value" property="itemValue"/>
+        <result column="level" property="level"/>
+        <result column="description" property="description"/>
+        <result column="sort" property="sort"/>
+        <result column="enabled" property="enabled"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_by" property="createBy"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+    
+    <select id="selectByTypeCode" resultMap="BaseResultMap">
+        SELECT * FROM sys_dictionary 
+        WHERE item_code = #{typeCode} AND deleted = 0 AND enabled = 1
+        ORDER BY sort ASC
+    </select>
+    
+    <select id="selectByDictType" resultMap="BaseResultMap">
+        SELECT * FROM sys_dictionary 
+        WHERE dict_type = #{dictType} AND deleted = 0 AND enabled = 1
+        ORDER BY level ASC, sort ASC
+    </select>
+    
+    <select id="selectByParentId" resultMap="BaseResultMap">
+        SELECT * FROM sys_dictionary 
+        WHERE parent_id = #{parentId} AND deleted = 0 AND enabled = 1
+        ORDER BY sort ASC
+    </select>
+    
+    <select id="selectByTypeAndLevel" resultMap="BaseResultMap">
+        SELECT * FROM sys_dictionary 
+        WHERE dict_type = #{dictType} AND level = #{level} AND deleted = 0 AND enabled = 1
+        ORDER BY sort ASC
+    </select>
+    
+</mapper>

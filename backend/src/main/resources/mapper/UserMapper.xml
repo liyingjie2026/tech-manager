@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.research.project.mapper.UserMapper">
+    
+    <resultMap id="BaseResultMap" type="com.research.project.entity.User">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="real_name" property="realName"/>
+        <result column="gender" property="gender"/>
+        <result column="phone" property="phone"/>
+        <result column="email" property="email"/>
+        <result column="id_card" property="idCard"/>
+        <result column="title" property="title"/>
+        <result column="institution_id" property="institutionId"/>
+        <result column="institution_name" property="institutionName"/>
+        <result column="department" property="department"/>
+        <result column="user_type" property="userType"/>
+        <result column="status" property="status"/>
+        <result column="last_login_time" property="lastLoginTime"/>
+        <result column="created_at" property="createdBy"/>
+        <result column="updated_at" property="updatedBy"/>
+        <result column="created_time" property="createdTime"/>
+        <result column="updated_time" property="updatedTime"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+
+    <!-- ==================== 用户列表查询 ==================== -->
+
+    <!-- 分页查询用户列表 - 对应Controller: list() -->
+    <select id="selectPageList" resultMap="BaseResultMap">
+        SELECT u.* FROM sys_user u
+        WHERE u.deleted = 0
+        <if test="keyword != null and keyword != ''">
+            AND (u.username LIKE CONCAT('%', #{keyword}, '%') 
+                 OR u.real_name LIKE CONCAT('%', #{keyword}, '%')
+                 OR u.phone LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <if test="status != null and status != ''">
+            AND u.status = #{status}
+        </if>
+        <if test="roleId != null">
+            AND u.role_id = #{roleId}
+        </if>
+        <if test="institutionId != null">
+            AND u.institution_id = #{institutionId}
+        </if>
+        ORDER BY u.create_time DESC
+    </select>
+
+    <!-- 根据用户名查询 -->
+    <select id="selectByUsername" resultMap="BaseResultMap">
+        SELECT * FROM sys_user WHERE username = #{username} AND deleted = 0
+    </select>
+
+    <!-- 根据手机号查询 -->
+    <select id="selectByPhone" resultMap="BaseResultMap">
+        SELECT * FROM sys_user WHERE phone = #{phone} AND deleted = 0
+    </select>
+
+    <!-- 根据机构ID查询 -->
+    <select id="selectByInstitutionId" resultMap="BaseResultMap">
+        SELECT * FROM sys_user WHERE institution_id = #{institutionId} AND deleted = 0
+    </select>
+
+    <!-- 根据角色ID查询 -->
+    <select id="selectByRoleId" resultMap="BaseResultMap">
+        SELECT * FROM sys_user WHERE role_id = #{roleId} AND deleted = 0
+    </select>
+
+    <!-- ==================== 用户增删改 ==================== -->
+
+    <!-- 新增用户 - 对应Controller: create() -->
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sys_user (
+            username, password, real_name, phone, email, id_card, avatar,
+            gender, user_type, institution_id, institution_name, department,
+            position, title, role_id, role_name, status, audit_status, create_time, create_by
+        ) VALUES (
+            #{username}, #{password}, #{realName}, #{phone}, #{email}, #{idCard}, #{avatar},
+            #{gender}, #{userType}, #{institutionId}, #{institutionName}, #{department},
+            #{position}, #{title}, #{roleId}, #{roleName}, #{status}, #{auditStatus}, NOW(), #{createBy}
+        )
+    </insert>
+
+    <!-- 更新用户 - 对应Controller: update() -->
+    <update id="updateUser">
+        UPDATE sys_user SET
+            real_name = #{realName},
+            phone = #{phone},
+            email = #{email},
+            id_card = #{idCard},
+            avatar = #{avatar},
+            gender = #{gender},
+            department = #{department},
+            position = #{position},
+            title = #{title},
+            update_time = NOW(),
+            update_by = #{updateBy}
+        WHERE id = #{id} AND deleted = 0
+    </update>
+
+    <!-- 删除用户 - 对应Controller: delete() -->
+    <update id="deleteUser">
+        UPDATE sys_user SET deleted = 1, update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 批量删除用户 - 对应Controller: batchDelete() -->
+    <update id="batchDeleteUsers">
+        UPDATE sys_user SET deleted = 1, update_time = NOW()
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!-- ==================== 用户状态管理 ==================== -->
+
+    <!-- 启用用户 - 对应Controller: enable() -->
+    <update id="enableUser">
+        UPDATE sys_user SET status = 'active', update_time = NOW()
+        WHERE id = #{id} AND deleted = 0
+    </update>
+
+    <!-- 禁用用户 - 对应Controller: disable() -->
+    <update id="disableUser">
+        UPDATE sys_user SET status = 'disabled', update_time = NOW()
+        WHERE id = #{id} AND deleted = 0
+    </update>
+
+    <!-- 重置密码 - 对应Controller: resetPassword() -->
+    <update id="resetPassword">
+        UPDATE sys_user SET password = #{password}, update_time = NOW()
+        WHERE id = #{id} AND deleted = 0
+    </update>
+
+    <!-- 分配角色 - 对应Controller: assignRoles() -->
+    <update id="updateUserRole">
+        UPDATE sys_user SET 
+            role_id = #{roleId},
+            role_name = #{roleName},
+            update_time = NOW()
+        WHERE id = #{id} AND deleted = 0
+    </update>
+
+    <!-- 审核用户 - 对应Controller: audit() -->
+    <update id="auditUser">
+        UPDATE sys_user SET 
+            audit_status = #{auditStatus},
+            status = #{status},
+            update_time = NOW()
+        WHERE id = #{id} AND deleted = 0
+    </update>
+
+    <!-- 更新最后登录信息 -->
+    <update id="updateLastLogin">
+        UPDATE sys_user SET 
+            last_login_time = NOW(),
+            last_login_ip = #{lastLoginIp}
+        WHERE id = #{id} AND deleted = 0
+    </update>
+
+    <!-- ==================== 用户统计 ==================== -->
+
+    <!-- 统计用户数量 -->
+    <select id="selectCountByStatus" resultType="map">
+        SELECT status, COUNT(*) as count
+        FROM sys_user WHERE deleted = 0
+        GROUP BY status
+    </select>
+
+    <!-- 按机构统计用户数量 -->
+    <select id="selectCountByInstitution" resultType="map">
+        SELECT institution_id, institution_name, COUNT(*) as count
+        FROM sys_user WHERE deleted = 0
+        GROUP BY institution_id, institution_name
+    </select>
+
+</mapper>

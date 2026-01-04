@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.research.project.mapper.BorrowRecordMapper">
+    
+    <resultMap id="BaseResultMap" type="com.research.project.entity.BorrowRecord">
+        <id column="id" property="id"/>
+        <result column="equipment_id" property="equipmentId"/>
+        <result column="borrower_id" property="borrowerId"/>
+        <result column="institution_id" property="institutionId"/>
+        <result column="reason" property="reason"/>
+        <result column="borrow_time" property="borrowTime"/>
+        <result column="expected_return_time" property="expectedReturnTime"/>
+        <result column="actual_return_time" property="actualReturnTime"/>
+        <result column="status" property="status"/>
+        <result column="audit_comment" property="auditComment"/>
+        <result column="audit_time" property="auditTime"/>
+        <result column="auditor_id" property="auditorId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+
+</mapper>
